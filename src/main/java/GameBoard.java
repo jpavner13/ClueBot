@@ -1,11 +1,15 @@
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.List;
 
-public class gameBoardBuilder{
+// Singleton class.
+public class GameBoard
+{
+    private static GameBoard instance;
+
     private String[][] board;
 
-    public MazeBuilder createBasicBoard() {
-        this.board = {
+    public GameBoard()
+    {
+        this.board = new String[][]{
                 {"Spa", "Spa", "Spa", "Spa", "Spa", "Spa", "Peacock", "Empty", "Theater", "Theater", "Theater", "Theater", "Theater", "Empty", "Living Room", "Living Room", "Living Room", "Living Room", "Living Room", "Living Room", "Plum", "Empty", "Observatory", "Observatory"},
                 {"Spa", "Spa", "Spa", "Spa", "Spa", "Spa", "Empty", "Empty", "Theater", "Theater", "Theater", "Theater", "Theater", "Clue", "Living Room", "Living Room", "Living Room", "Living Room", "Living Room", "Living Room", "Empty", "Empty", "Observatory", "Observatory"},
                 {"Spa", "Spa", "Spa", "Spa", "Spa", "Spa", "Empty", "Empty", "Theater", "Theater", "Theater", "Theater", "Theater Door", "Empty", "Living Room", "Living Room", "Living Room", "Living Room", "Living Room", "Living Room", "Empty", "Empty", "Observatory", "Observatory"},
@@ -35,10 +39,21 @@ public class gameBoardBuilder{
                 {"Kitchen", "Kitchen", "Kitchen", "Kitchen", "Kitchen", "Kitchen", "Kitchen", "Empty", "Empty", "Dining Room", "Dining Room", "Dining Room", "Dining Room", "Dining Room", "Dining Room", "Dining Room", "Dining Room", "Empty", "Empty", "Empty", "Guest House", "Guest House", "Guest House", "Guest House"},
                 {"Kitchen", "Kitchen", "Kitchen", "Kitchen", "Kitchen", "Kitchen", "Kitchen", "Empty", "Empty", "Dining Room", "Dining Room", "Dining Room", "Dining Room", "Dining Room", "Dining Room", "Dining Room", "Dining Room", "Empty", "Empty", "Empty", "Guest House", "Guest House", "Guest House", "Guest House"},
                 {"Kitchen", "Kitchen", "Kitchen", "Kitchen", "Kitchen", "Kitchen", "Kitchen", "Mustard", "Empty", "Dining Room", "Dining Room", "Dining Room", "Dining Room", "Dining Room", "Dining Room", "Dining Room", "Dining Room", "Empty", "Scarlet", "Empty", "Guest House", "Guest House", "Guest House", "Guest House"}
-        };
+            };
+    }
+    public static GameBoard getInstance()
+    {
+        if (instance == null)
+        {
+            instance = new GameBoard();
+        }
+
+        return instance;
     }
 
-    public String[][] getBoard{
-        return this.board;
+    public String[][] getBoard()
+    {
+        return board;
     }
+
 }
