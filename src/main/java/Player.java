@@ -4,14 +4,12 @@ import java.util.Random;
 public class Player{
     private final String playerName;
     private int[] boardPosition;
+    private final ArrayList<Card> cardsInHand;
 
-    private ArrayList<Weapons> weaponsInHand;
-    private ArrayList<Players> playersInHand;
-    private ArrayList<Rooms> roomsInHand;
-
-    public Adventurer (String name, int[] startingBoardPosition){
+    public Player (String name, int[] startingBoardPosition){
         this.playerName = name;
         this.boardPosition = startingBoardPosition;
+        cardsInHand = new ArrayList<Card>();
     }
 
     public String getPlayerName(){
@@ -27,6 +25,10 @@ public class Player{
     }
 
     public void addCardToHand(Card newCard){
+        this.cardsInHand.add(newCard);
+    }
 
+    public ArrayList<Card> getHand(){
+        return this.cardsInHand;
     }
 }
