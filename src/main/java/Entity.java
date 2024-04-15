@@ -31,5 +31,11 @@ public abstract class Entity {
         return this.cardsInHand;
     }
 
-    abstract ArrayList<Card> guess(Card roomCurrIn);
+    abstract ArrayList<Card> guess(Card roomCurrIn, ArrayList<Card> allCards);
+
+    abstract Card showCard(Entity guesser, Card roomGuessed, Card weaponGuessed, Card suspectGuessed);
+
+    abstract void getShownCard(Card shownCard, Entity reveler);
+
+    abstract void watchCardReveal(Entity guesser, Entity reveler, Card roomGuessed, Card weaponGuessed, Card suspectGuessed);
 }
