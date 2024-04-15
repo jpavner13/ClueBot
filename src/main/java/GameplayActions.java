@@ -46,8 +46,9 @@ public class GameplayActions {
                 return solutionAndExtraCards;
         }
 
-        // This instantiation is necessary to have cards as objects with attributes rather having a slow dedicated getCardType method
+        // This instantiation is necessary to have cards as objects with attributes rather having a slow dedicated "getCardType" method
         private static ArrayList<ArrayList<Card>> createDeck() {
+
                 ArrayList<Card> suspects = new ArrayList<>();
                 ArrayList<Card> weapons = new ArrayList<>();
                 ArrayList<Card> rooms = new ArrayList<>();
@@ -73,4 +74,13 @@ public class GameplayActions {
 
                 return deck;
         }
+
+//        protected static void makeGuess(Card roomCurrIn, Entity guesser, ArrayList<Player> players, ArrayList<Bot> bots) {
+//
+//                ArrayList<Card> weaponAndSuspect = guesser.guess(roomCurrIn);
+//
+//                ArrayList<Entity> otherPlayers = new ArrayList<>();
+//                otherPlayers.addAll(players);
+//                otherPlayers.addAll(bots);
+//        }
 }
