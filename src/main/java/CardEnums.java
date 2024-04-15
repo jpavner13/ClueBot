@@ -1,5 +1,5 @@
 enum CardTypes {
-    PlayerCard,
+    SuspectCard,
     RoomCard,
     WeaponCard
 }
