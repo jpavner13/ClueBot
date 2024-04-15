@@ -12,15 +12,14 @@ public class Clue {
     public Clue(ArrayList<Player> players, ArrayList<Bot> bots) {
         this.players = players;
         this.bots = bots;
-    }
-
-    public void playGame() {
-
-        // This method also deals cards to individual players
         ArrayList<ArrayList<Card>> solutionAndExtraCards = GameplayActions.dealCards(players, bots);
 
         mysterySolution = solutionAndExtraCards.get(0);
         poolCards = solutionAndExtraCards.get(1);
+    }
+
+    public void playGame() {
+        // Main gameplay loop
     }
 
 }
