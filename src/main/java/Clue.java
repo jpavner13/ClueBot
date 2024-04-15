@@ -8,6 +8,7 @@ public class Clue {
     private ArrayList<Bot> bots;
     private ArrayList<Card> mysterySolution;
     private ArrayList<Card> poolCards;
+    private ArrayList<Card> allCards;
 
     public Clue(ArrayList<Player> players, ArrayList<Bot> bots) {
         this.players = players;
@@ -16,6 +17,7 @@ public class Clue {
 
         mysterySolution = solutionAndExtraCards.get(0);
         poolCards = solutionAndExtraCards.get(1);
+        allCards = solutionAndExtraCards.get(2);
     }
 
     public void playGame() {

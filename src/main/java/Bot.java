@@ -8,8 +8,33 @@ public class Bot extends Entity {
     }
 
     @Override
-    ArrayList<Card> guess(Card roomCurrIn) {
+    ArrayList<Card> guess(Card roomCurrIn, ArrayList<Card> allCards) {
         return null;
+    }
+
+    //Todo this is a naive implementation. Change in later version.
+    @Override
+    Card showCard(Entity guesser, Card roomGuessed, Card weaponGuessed, Card suspectGuessed) {
+        for (Card card : getHand()) {
+            if (card == roomGuessed || card == weaponGuessed || card == suspectGuessed) {
+                return card;
+            }
+        }
+        //Failsafe, this line should never be reached
+        return getHand().get(0);
+    }
+
+    //Todo this is a naive implementation. Change in later version.
+    @Override
+    void getShownCard(Card shownCard, Entity reveler) {
+        System.out.println("I, " + getPlayerName() + " was just shown " + shownCard.getCardName() + " by " + reveler.getPlayerName());
+    }
+
+    //Todo this is a naive implementation. Change in later version.
+    @Override
+    void watchCardReveal(Entity guesser, Entity reveler, Card roomGuessed, Card weaponGuessed, Card suspectGuessed) {
+        System.out.println("I, " + getPlayerName() + " just saw " + guesser.getPlayerName() + " get shown a card by " + reveler.getPlayerName() +
+                " when the guess was: " + roomGuessed.getCardName() + ", " + weaponGuessed.getCardName() + ", " + suspectGuessed.getCardName() + ".");
     }
 
     public List<int[]> getAdjacentMoves()

@@ -23,6 +23,7 @@ public class DealCardsTests {
 
         ArrayList<Card> mysterySolution = solutionAndExtraCards.get(0);
         ArrayList<Card> poolCards = solutionAndExtraCards.get(1);
+        ArrayList<Card> allCards = solutionAndExtraCards.get(2);
 
         // Test if players were dealt cards
         assertEquals(bob.getHand().size(), 11);
@@ -33,5 +34,8 @@ public class DealCardsTests {
 
         // Test if no cards are left after dealing
         assertEquals(poolCards.size(), 0);
+
+        // Test that all cards array is generated
+        assertEquals(allCards.size(), 25);
     }
 }
