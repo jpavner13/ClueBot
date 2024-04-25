@@ -1,13 +1,18 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Objects;
 
 public class Bot extends Entity {
     // TODO We will likely have to refactor this code so it is an interface as to support different types of bots
 
-
+    HashMap<String, ArrayList<Card>> otherPlayerHands;
+    ArrayList<Card> allPossibleCards;
 
     public Bot(String name, int[] startingBoardPosition) {
         super(name, startingBoardPosition);
+        otherPlayerHands = new HashMap<>();
+        allPossibleCards = new ArrayList<>();
     }
 
     @Override
@@ -30,6 +35,8 @@ public class Bot extends Entity {
     //Todo this is a naive implementation. Change in later version.
     @Override
     void getShownCard(Card shownCard, Entity reveler) {
+        otherPlayerHands.get(reveler.getPlayerName()).add(shownCard);
+        // V This can be replaced by an observer pattern later
         System.out.println("I, " + getPlayerName() + " was just shown " + shownCard.getCardName() + " by " + reveler.getPlayerName());
     }
 
@@ -41,9 +48,15 @@ public class Bot extends Entity {
     }
 
     protected void seeOtherPlayers(ArrayList<Entity> allPlayers) {
+        for (Entity player : allPlayers) {
+            if (!Objects.equals(player.getPlayerName(), this.getPlayerName())) {
+                otherPlayerHands.put(player.getPlayerName(), new ArrayList<>());
+            }
+        }
     }
 
     protected void seeDeck(ArrayList<Card> allCards) {
+        allPossibleCards = allCards;
     }
 
     public List<int[]> getAdjacentMoves()
