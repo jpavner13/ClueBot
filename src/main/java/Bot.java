@@ -2,6 +2,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Bot extends Entity {
+    // TODO We will likely have to refactor this code so it is an interface as to support different types of bots
+
+
 
     public Bot(String name, int[] startingBoardPosition) {
         super(name, startingBoardPosition);
@@ -35,6 +38,12 @@ public class Bot extends Entity {
     void watchCardReveal(Entity guesser, Entity reveler, Card roomGuessed, Card weaponGuessed, Card suspectGuessed) {
         System.out.println("I, " + getPlayerName() + " just saw " + guesser.getPlayerName() + " get shown a card by " + reveler.getPlayerName() +
                 " when the guess was: " + roomGuessed.getCardName() + ", " + weaponGuessed.getCardName() + ", " + suspectGuessed.getCardName() + ".");
+    }
+
+    protected void seeOtherPlayers(ArrayList<Entity> allPlayers) {
+    }
+
+    protected void seeDeck(ArrayList<Card> allCards) {
     }
 
     public List<int[]> getAdjacentMoves()

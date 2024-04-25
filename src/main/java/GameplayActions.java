@@ -126,4 +126,15 @@ public class GameplayActions {
 
 
         }
+
+        public static void seeOtherPlayersAndPossibleCards(ArrayList<Player> players, ArrayList<Bot> bots, ArrayList<Card> allCards) {
+                ArrayList<Entity> allPlayers = new ArrayList<>();
+                allPlayers.addAll(players);
+                allPlayers.addAll(bots);
+                for (Entity player : allPlayers) {
+                        player.seeOtherPlayers(allPlayers);
+                        player.seeDeck(allCards);
+                }
+        }
+
 }

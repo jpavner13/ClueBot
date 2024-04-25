@@ -18,6 +18,9 @@ public class Clue {
         mysterySolution = solutionAndExtraCards.get(0);
         poolCards = solutionAndExtraCards.get(1);
         allCards = solutionAndExtraCards.get(2);
+
+        //Make all players aware of the existence of other players and the deck being used
+        GameplayActions.seeOtherPlayersAndPossibleCards(players, bots, allCards);
     }
 
     public void playGame() {
