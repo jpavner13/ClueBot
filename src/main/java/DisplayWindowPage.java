@@ -1,32 +1,66 @@
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.TextUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class DisplayWindowPage implements ActionListener {
+public class DisplayWindowPage {
     JFrame frame = new JFrame();
     JPanel panel = new JPanel();
 
+    String cardListText = ("<html><div style='text-align: center; line-height: 2;'><font size='5'><br><u><b>Suspects:</b></u><br>" +
+            "Miss Scarlett<br>" +
+            "Colonel Mustard<br>" +
+            "Mrs. White<br>" +
+            "Reverend Green<br>" +
+            "Mrs. Peacock<br>" +
+            "Professor Plum</font>" +
+            "<br><br>" +
+            "<font size='5'><u><b>Weapons:</b></u><br>" +
+            "Rope<br>" +
+            "Candlestick<br>" +
+            "Knife<br>" +
+            "Pistol<br>" +
+            "Bat<br>" +
+            "Dumbbell<br>" +
+            "Trophy<br>" +
+            "Poison<br>" +
+            "Axe</font>" +
+            "<br><br>" +
+            "<font size='5'><u><b>Rooms:</b></u><br>" +
+            "Kitchen<br>" +
+            "Patio<br>" +
+            "Spa<br>" +
+            "Dining Room<br>" +
+            "Pool<br>" +
+            "Theatre<br>" +
+            "Living Room<br>" +
+            "Guest House<br>" +
+            "Hall<br>" +
+            "Observatory</font></div></html>");
+
+    JEditorPane cardList = new JEditorPane("text/html", cardListText);
+
+    String cardsInHandString = "<html><div style='text-align: center; line-height: 2;'><font size='5'><br><u><b>Cards In Hand:</b></u><br>";
+    JEditorPane cardsInHand = new JEditorPane("text/html", cardsInHandString);
     GameBoard gameBoard = new GameBoard();
 
     DisplayWindowPage(){
-        // Set the layout of the panel to GridLayout with 24 rows and 29 columns
+        frame.setLayout(null);
         panel.setLayout(new GridLayout(29, 24));
 
-        // Calculate the preferred size for each cell
-        int cellWidth = 5; // Adjust as needed
-        int cellHeight = 5; // Adjust as needed
+        int cellWidth = 5;
+        int cellHeight = 5;
 
-        // Add JLabels to represent elements of your 24x29 array
         for (int i = 0; i < 29; i++) {
             for (int j = 0; j < 24; j++) {
                 String labelText = gameBoard.getTileName(i, j);
 
                 JLabel label = new JLabel(labelText);
-                label.setHorizontalAlignment(SwingConstants.CENTER); // Center align the text
-                label.setBorder(BorderFactory.createLineBorder(Color.BLACK)); // Add border to labels
-                label.setPreferredSize(new Dimension(cellWidth, cellHeight)); // Set preferred size
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+                label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+                label.setPreferredSize(new Dimension(cellWidth, cellHeight));
                 label.setOpaque(true);
 
                 switch(labelText){
@@ -73,10 +107,10 @@ public class DisplayWindowPage implements ActionListener {
                         label.setBackground(new Color(220, 20, 60));
                         break;
                     case "White":
-                        label.setBackground(Color.WHITE); // Orange-Red
+                        label.setBackground(Color.WHITE);
                         break;
                     case "Green":
-                        label.setBackground(Color.GREEN); // Crimson
+                        label.setBackground(Color.GREEN);
                         break;
                     case "Peacock":
                         label.setBackground(new Color(50, 100, 160));
@@ -85,7 +119,6 @@ public class DisplayWindowPage implements ActionListener {
                         label.setBackground(new Color(100, 50, 180));
                         break;
                     default:
-                        // Check if the label text contains "Door"
                         if (labelText.contains("Door")) {
                             label.setBackground(new Color(139, 69, 19)); // Brown color
                         } else {
@@ -99,18 +132,24 @@ public class DisplayWindowPage implements ActionListener {
             }
         }
 
-        panel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        panel.setBounds(50, 100, 700, 500);
+        panel.setBounds(300, 10, 1200, 800);
 
+        cardList.setEditable(false);
+        cardList.setFocusable(false);
+        cardList.setOpaque(true);
+        cardList.setBounds(60, 60, 180, 700);
+
+        cardsInHand.setEditable(false);
+        cardsInHand.setFocusable(false);
+        cardsInHand.setOpaque(true);
+        cardsInHand.setBounds(60, 820, 1600, 200);
+
+        frame.add(cardList);
+        frame.add(cardsInHand);
         frame.add(panel);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setVisible(true);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
     }
 }
