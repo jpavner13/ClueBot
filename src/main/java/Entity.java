@@ -38,4 +38,8 @@ public abstract class Entity {
     abstract void getShownCard(Card shownCard, Entity reveler);
 
     abstract void watchCardReveal(Entity guesser, Entity reveler, Card roomGuessed, Card weaponGuessed, Card suspectGuessed);
+
+    abstract void seeOtherPlayers(ArrayList<Entity> allPlayers);
+
+    abstract void seeDeck(ArrayList<Card> allCards);
 }

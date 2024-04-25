@@ -41,6 +41,12 @@ public class Player extends Entity{
                 " when the guess was: " + roomGuessed.getCardName() + ", " + weaponGuessed.getCardName() + ", " + suspectGuessed.getCardName() + ".");
     }
 
+    protected void seeOtherPlayers(ArrayList<Entity> allPlayers) {
+    }
+
+    protected void seeDeck(ArrayList<Card> allCards) {
+    }
+
     public List<int[]> getAdjacentMoves()
     {
         int[] currPosition = this.getBoardPosition();
