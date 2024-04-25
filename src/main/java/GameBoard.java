@@ -56,4 +56,8 @@ public class GameBoard
         return board;
     }
 
+    public String getTileName(int row, int col){
+        return this.board[row][col];
+    }
+
 }
