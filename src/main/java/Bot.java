@@ -17,6 +17,20 @@ public class Bot extends Entity {
         cardsShownToOtherPlayers = new HashMap<>();
     }
 
+    protected void seeOtherPlayers(ArrayList<Entity> allPlayers) {
+        for (Entity player : allPlayers) {
+            if (!Objects.equals(player.getPlayerName(), this.getPlayerName())) {
+                otherPlayerHands.put(player.getPlayerName(), new ArrayList<>());
+                playersPastReveals.put(player.getPlayerName(), new ArrayList<>());
+                cardsShownToOtherPlayers.put(player.getPlayerName(), new ArrayList<>());
+            }
+        }
+    }
+
+    protected void seeDeck(ArrayList<Card> allCards) {
+        allPossibleCards = allCards;
+    }
+
     @Override
     public void addCardToHand(Card newCard){
 
@@ -30,14 +44,45 @@ public class Bot extends Entity {
         return null;
     }
 
-    //Todo this is a naive implementation. Change in later version.
+    // This method is only invoked when the bot has already been verified as having a valid card to show
     @Override
     Card showCard(Entity guesser, Card roomGuessed, Card weaponGuessed, Card suspectGuessed) {
-        for (Card card : getHand()) {
-            if (card == roomGuessed || card == weaponGuessed || card == suspectGuessed) {
+        String guesserName = guesser.getPlayerName();
+
+        ArrayList<Card> combinedGuess = new ArrayList<>();
+        combinedGuess.add(roomGuessed);
+        combinedGuess.add(weaponGuessed);
+        combinedGuess.add(suspectGuessed);
+
+        // Only consider cards in bot's hand
+        combinedGuess.retainAll(getHand());
+
+        // If only one card is owned, show it
+        if (combinedGuess.size() == 1) {
+            return combinedGuess.get(0);
+        }
+        // If bot has shown this player any card in the guess, show that card again
+        for (Card card : combinedGuess) {
+            if (cardsShownToOtherPlayers.get(guesserName).contains(card)) {
                 return card;
             }
         }
+        // If two or more cards in hand from guess, show card that has been shown to the most other players
+        ArrayList<Integer> amountPlayersCardShownTo = new ArrayList<>();
+        for (int i = 0; i < combinedGuess.size(); i++) {
+            amountPlayersCardShownTo.add(0);
+            for (Map.Entry<String, ArrayList<Card>> cardsShown : cardsShownToOtherPlayers.entrySet()) {
+                for (Card card : cardsShown.getValue()) {
+                    if (card.equals(combinedGuess.get(i))) {
+                        amountPlayersCardShownTo.set(i, amountPlayersCardShownTo.get(i) + 1);
+                    }
+                }
+            }
+        }
+        if (!combinedGuess.isEmpty()) {
+            return combinedGuess.get(Collections.max(amountPlayersCardShownTo));
+        }
+
         //Failsafe, this line should never be reached
         return getHand().get(0);
     }
@@ -121,20 +166,6 @@ public class Bot extends Entity {
             updateInsights(otherNewlyDeducedCardsOwner.get(i), otherNewlyDeducedCards.get(i));
         }
 
-    }
-
-    protected void seeOtherPlayers(ArrayList<Entity> allPlayers) {
-        for (Entity player : allPlayers) {
-            if (!Objects.equals(player.getPlayerName(), this.getPlayerName())) {
-                otherPlayerHands.put(player.getPlayerName(), new ArrayList<>());
-                playersPastReveals.put(player.getPlayerName(), new ArrayList<>());
-                cardsShownToOtherPlayers.put(player.getPlayerName(), new ArrayList<>());
-            }
-        }
-    }
-
-    protected void seeDeck(ArrayList<Card> allCards) {
-        allPossibleCards = allCards;
     }
 
     public List<int[]> getAdjacentMoves()
