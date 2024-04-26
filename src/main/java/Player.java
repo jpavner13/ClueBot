@@ -9,10 +9,10 @@ public class Player extends Entity{
 
     //Todo this guess function is designed to work for the initial test, we will have to figure out how to do JSwing auto fill
     @Override
-    ArrayList<Card> guess(Card roomCurrIn, ArrayList<Card> allCards) {
+    ArrayList<Card> guess(Card roomCurrIn) {
         ArrayList<Card> guessedCards = new ArrayList<>();
-        guessedCards.add(allCards.get(0));
-        guessedCards.add(allCards.get(1));
+//        guessedCards.add(allCards.get(0));
+//        guessedCards.add(allCards.get(1));
         return guessedCards;
     }
 

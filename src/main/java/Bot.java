@@ -39,9 +39,65 @@ public class Bot extends Entity {
 
     }
 
+    // Game theory blurb: It is better to guess a card from hand than the known solution card, as any other
+    // player who knows the cards in your hand will get the solution automatically if you guess it and it
+    // goes through. Additionally, if the bot keeps guessing the solution to a card type and other players
+    // know most cards of that type, they will likely infer the solution as well. If turn order was tracked
+    // It would technically be best to guess a card in the hand of the last player(s) in the turn order if
+    // their hand(s) is already known, as getting shown that card is effectively the same as the guess going through
+    // all players.
+
     @Override
-    ArrayList<Card> guess(Card roomCurrIn, ArrayList<Card> allCards) {
-        return null;
+    ArrayList<Card> guess(Card roomCurrIn) {
+
+        // Remove cards known to be in players hands
+        ArrayList<Card> candidateCards = new ArrayList<>(allPossibleCards);
+        candidateCards.removeAll(cardsDeducedNotSolution);
+
+        ArrayList<Card> shuffledHand = new ArrayList<>(getHand());
+
+        // Prevent predictable guessing patterns so players can't infer bot deductions
+        Collections.shuffle(candidateCards);
+        Collections.shuffle(shuffledHand);
+
+        Card weaponGuess = null;
+        Card suspectGuess = null;
+        int numWeaponsPossible = 0;
+        int numSuspectsPossible = 0;
+
+        for (Card card : candidateCards) {
+            if (card.getTypeOfCard() == CardTypes.WeaponCard) {
+                weaponGuess = card;
+                numWeaponsPossible++;
+            }
+        }
+        for (Card card : candidateCards) {
+            if (card.getTypeOfCard() == CardTypes.SuspectCard) {
+                suspectGuess = card;
+                numSuspectsPossible++;
+            }
+        }
+        if (numWeaponsPossible == 1) {
+            for (Card card : shuffledHand) {
+                if (card.getTypeOfCard() == CardTypes.WeaponCard) {
+                    weaponGuess = card;
+                }
+            }
+        }
+        if (numSuspectsPossible == 1) {
+            for (Card card : shuffledHand) {
+                if (card.getTypeOfCard() == CardTypes.SuspectCard) {
+                    suspectGuess = card;
+                }
+            }
+        }
+
+        ArrayList<Card> botsGuess = new ArrayList<>();
+        botsGuess.add(weaponGuess);
+        botsGuess.add(suspectGuess);
+        botsGuess.add(roomCurrIn);
+
+        return botsGuess;
     }
 
     // This method is only invoked when the bot has already been verified as having a valid card to show

@@ -80,7 +80,7 @@ public class GameplayActions {
 
         protected static void makeGuess(Card roomCurrIn, Entity guesser, ArrayList<Player> players, ArrayList<Bot> bots, ArrayList<Card> allCards) {
 
-                ArrayList<Card> weaponAndSuspect = guesser.guess(roomCurrIn, allCards);
+                ArrayList<Card> weaponAndSuspect = guesser.guess(roomCurrIn);
                 Card weaponGuessed = weaponAndSuspect.get(0);
                 Card suspectGuessed = weaponAndSuspect.get(1);
 
