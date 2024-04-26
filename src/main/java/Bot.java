@@ -224,6 +224,38 @@ public class Bot extends Entity {
 
     }
 
+    // Returns rooms still needed to deduce, or room in hand if solved, or solution if no room card in hand.
+    protected ArrayList<Card> getTargetRooms() {
+        ArrayList<Card> targetRooms = new ArrayList<>();
+
+        // Remove cards known to be in players hands
+        ArrayList<Card> candidateCards = new ArrayList<>(allPossibleCards);
+        candidateCards.removeAll(cardsDeducedNotSolution);
+
+        int numRoomsPossible = 0;
+
+        for (Card card : candidateCards) {
+            if (card.getTypeOfCard() == CardTypes.RoomCard) {
+                targetRooms.add(card);
+                numRoomsPossible++;
+            }
+        }
+        if (numRoomsPossible == 1) {
+            ArrayList<Card> roomCardsInHand = new ArrayList<>();
+            for (Card card : getHand()) {
+                if (card.getTypeOfCard() == CardTypes.RoomCard) {
+                    roomCardsInHand.add(card);
+                }
+            }
+            if (!roomCardsInHand.isEmpty()) {
+                targetRooms.clear();
+                targetRooms.addAll(roomCardsInHand);
+            }
+        }
+
+        return targetRooms;
+    }
+
     public List<int[]> getAdjacentMoves()
     {
         int[] currPosition = this.getBoardPosition();
