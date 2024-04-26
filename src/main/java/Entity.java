@@ -31,7 +31,7 @@ public abstract class Entity {
         return this.cardsInHand;
     }
 
-    abstract ArrayList<Card> guess(Card roomCurrIn, ArrayList<Card> allCards);
+    abstract ArrayList<Card> guess(Card roomCurrIn);
 
     abstract Card showCard(Entity guesser, Card roomGuessed, Card weaponGuessed, Card suspectGuessed);
 
