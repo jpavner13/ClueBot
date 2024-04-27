@@ -7,6 +7,7 @@ import java.awt.event.ComponentEvent;
 import java.beans.PropertyVetoException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class DisplayWindowPage {
@@ -14,8 +15,10 @@ public class DisplayWindowPage {
     JPanel panel = new JPanel();
     String playTurnButtonText = ("<html><div style='text-align: center; line-height: 2;'><font size='5'><u><b>Play Turn:</b></u><br>");
     JButton playTurnButton = new JButton();
-    String[] suspects = {"Miss Scarlett", "Colonel Mustard", "Mrs. White", "Reverend Green", "Mrs. Peacock", "Professor Plum"};
-    String[] suspectsAndNull = {"Miss Scarlett", "Colonel Mustard", "Mrs. White", "Reverend Green", "Mrs. Peacock", "Professor Plum", "No One"};
+    //String[] suspects = {"Miss Scarlett", "Colonel Mustard", "Mrs. White", "Reverend Green", "Mrs. Peacock", "Professor Plum"};
+    String[] suspects = {"Scarlet", "Mustard", "White", "Green", "Peacock", "Plum"};
+    //String[] suspectsAndNull = {"Miss Scarlett", "Colonel Mustard", "Mrs. White", "Reverend Green", "Mrs. Peacock", "Professor Plum", "No One"};
+    String[] suspectsAndNull = {"Scarlet", "Mustard", "White", "Green", "Peacock", "Plum", "No One"};
     String[] weapons = {"Rope", "Candlestick", "Knife", "Pistol", "Bat", "Dumbbell", "Trophy", "Poison", "Axe"};
     String[] rooms = {"Kitchen", "Patio", "Spa", "Dining Room", "Pool", "Theatre", "Living Room", "Guest House", "Hall", "Observatory"};
     JComboBox whoGuessed = new JComboBox(suspects);
@@ -79,8 +82,12 @@ public class DisplayWindowPage {
     Color[][] origionalColor = new Color[29][24];
     String movingPlayerName = null;
 
+    Bot bot;
 
-    DisplayWindowPage() throws MalformedURLException, PropertyVetoException {
+
+    DisplayWindowPage(Bot newBot, ArrayList<Card> allCards, ArrayList<Player> allPlayers) throws MalformedURLException, PropertyVetoException {
+        bot = newBot;
+
         frame.setLayout(null);
         panel.setLayout(new GridLayout(29, 24));
         playTurnButton.setLayout(null);
@@ -122,7 +129,6 @@ public class DisplayWindowPage {
 
                                 lastSelectedCellRow = finalRow;
                                 lastSelectedCellCol = finalCol;
-
                             }
                         } else {
                             clickedCell.setText(movingPlayerName);
@@ -249,15 +255,51 @@ public class DisplayWindowPage {
                 String weaponGuess = "Empty";
                 String roomGuess = "Empty";
 
-                // CALL function to make guess here
+                int row = 0;
+                int col = 0;
+
+                int numCells = panel.getComponentCount();
+                for (int i = 0; i < numCells; i++) {
+                    Component component = panel.getComponent(i);
+                    if (component instanceof JButton) {
+                        JButton button = (JButton) component;
+                        int x = button.getX();
+                        int y = button.getY();
+                        JButton buttonTemp = (JButton) component;
+                        if (Objects.equals(buttonTemp.getText(), bot.getPlayerName())) {
+                            row = i / 24;
+                            col = i % 24;
+                            break;
+                        }
+                    }
+                }
+
+                String roomName = null;
+                Card roomCard = null;
+                String tileName = gameBoard.getTileName(row, col);
+                if(isRoom(tileName)) {
+                    roomName = gameBoard.getTileName(row, col);
+                    for(Card card : allCards){
+                        if (Objects.equals(card.getCardName(), roomName)){
+                            roomCard = card;
+                            break;
+                        }
+                    }
+
+                    // CALL function to make guess here
+                    ArrayList<Card> guess = bot.guess(roomCard);
+                    weaponGuess = guess.get(0).getCardName();
+                    suspectGuess = guess.get(1).getCardName();
+                    roomGuess = guess.get(2).getCardName();
+                }
 
                 String guessText = ("<html><div style='text-align: center; line-height: 1;'><font size='5'><br><b>"+ suspectGuess + "</b><br>" +
                                     "<html><div style='text-align: center; line-height: 1;'><font size='5'><br><b>"+ weaponGuess + "</b><br>" +
                                     "<html><div style='text-align: center; line-height: 1;'><font size='5'><br><b>"+ roomGuess + "</b><br>");
 
-//                if(Objects.equals(suspectGuess, "Empty") && (Objects.equals(weaponGuess, "Empty"), (Objects.equals(roomGuess, "Empty")){
-//                    guessText = ("<html><div style='text-align: center; line-height: 1;'><font size='5'><br><b>"+ "No Guess Made" + "</b><br>");
-//                }
+                if(Objects.equals(suspectGuess, "Empty") && (Objects.equals(weaponGuess, "Empty") && (Objects.equals(roomGuess, "Empty")))) {
+                    guessText = ("<html><div style='text-align: center; line-height: 1;'><font size='5'><br><b>"+ "No Guess Made" + "</b><br>");
+                }
 
                 JEditorPane guessArea = new JEditorPane("text/html", guessText);
                 guessArea.setBounds(200, 45, 200, 150);
@@ -267,8 +309,8 @@ public class DisplayWindowPage {
                 cardShownLabel.setBounds(50, 200, 200, 30);
 
                 String[] noCardShown = {"No Card Shown"};
-                String[] allCards = concatenateArrays(suspects, weapons, rooms, noCardShown);
-                JComboBox cardShown = new JComboBox(allCards);
+                String[] allCardsList = concatenateArrays(suspects, weapons, rooms, noCardShown);
+                JComboBox cardShown = new JComboBox(allCardsList);
                 cardShown.setBounds(50, 225, 200, 25);
                 cardShown.setFocusable(true);
 
@@ -289,9 +331,25 @@ public class DisplayWindowPage {
                         guessFrame.setVisible(false);
 
                         String cardSeen = (String) cardShown.getSelectedItem();
+                        Card seenCard = null;
+                        for(Card card : allCards){
+                            if (Objects.equals(card.getCardName(), cardSeen)){
+                                seenCard = card;
+                                break;
+                            }
+                        }
                         String playerWhoShowedCard = (String) playerWhoShowed.getSelectedItem();
+                        Player playerShowing = null;
+                        for(Player player : allPlayers){
+                            if (Objects.equals(player.getPlayerName(), playerWhoShowedCard)){
+                                playerShowing = player;
+                            }
+                        }
 
                         // CALL Update Knowledge function here
+                        assert playerShowing != null;
+                        bot.getShownCard(seenCard, playerShowing);
+
                         eliminateCard(cardSeen);
                         cardList.updateUI();
                     }
@@ -364,7 +422,27 @@ public class DisplayWindowPage {
                 String roomGuessed = (String) roomsList.getSelectedItem();
                 String whoShowedInfo = (String) whoShowed.getSelectedItem();
 
+                Player whoGuessedCard = null;
+                Card suspectCard = null;
+                Card weaponsCard = null;
+                Card roomCard = null;
+                Player whoShowedCard = null;
+
+                for(Card card : allCards){
+                    String currCardName = card.getCardName();
+                    if (Objects.equals(currCardName, suspectGuessed)) suspectCard = card;
+                    else if (Objects.equals(currCardName, weaponGuessed)) weaponsCard = card;
+                    else if (Objects.equals(currCardName, roomGuessed)) roomCard = card;
+                }
+
+                for(Player player : allPlayers){
+                    String currCardName = player.getPlayerName();
+                    if(Objects.equals(currCardName, whoGuessedInfo)) whoGuessedCard = player;
+                    if(Objects.equals(currCardName, whoShowedInfo)) whoShowedCard = player;
+                }
+
                 // CALL function to witness Guess
+                bot.watchCardReveal(whoGuessedCard, whoShowedCard, roomCard, weaponsCard, suspectCard);
             }
         });
 
@@ -402,6 +480,10 @@ public class DisplayWindowPage {
 
     private boolean isPlayer(String playerName) {
         return(Objects.equals(playerName, "Mustard") || Objects.equals(playerName, "Scarlet") || Objects.equals(playerName, "White") || Objects.equals(playerName, "Green") || Objects.equals(playerName, "Peacock") || Objects.equals(playerName, "Plum"));
+    }
+
+    private boolean isRoom(String roomName) {
+        return(Objects.equals(roomName, "Spa") || Objects.equals(roomName, "Theater") || Objects.equals(roomName, "Living Room") || Objects.equals(roomName, "Observatory") || Objects.equals(roomName, "Patio") || Objects.equals(roomName, "Pool") || Objects.equals(roomName, "Hall") || Objects.equals(roomName, "Kitchen") || Objects.equals(roomName, "Dining Room") || Objects.equals(roomName, "Guest House"));
     }
 
     public void addCardToHand(String newCard){
