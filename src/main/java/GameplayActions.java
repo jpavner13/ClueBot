@@ -50,7 +50,7 @@ public class GameplayActions {
         }
 
         // This instantiation is necessary to have cards as objects with attributes rather having a slow dedicated "getCardType" method
-        private static ArrayList<ArrayList<Card>> createDeck() {
+        public static ArrayList<ArrayList<Card>> createDeck() {
 
                 ArrayList<Card> suspects = new ArrayList<>();
                 ArrayList<Card> weapons = new ArrayList<>();
@@ -77,6 +77,7 @@ public class GameplayActions {
 
                 return deck;
         }
+
 
         protected static void makeGuess(Card roomCurrIn, Entity guesser, ArrayList<Player> players, ArrayList<Bot> bots, ArrayList<Card> allCards) {
 

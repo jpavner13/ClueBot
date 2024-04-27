@@ -47,6 +47,7 @@ public class Bot extends Entity {
     // their hand(s) is already known, as getting shown that card is effectively the same as the guess going through
     // all players.
 
+    // Returns weapon, suspect, room in that order
     @Override
     ArrayList<Card> guess(Card roomCurrIn) {
 
