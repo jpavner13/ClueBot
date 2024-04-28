@@ -208,9 +208,9 @@ public class Bot extends Entity {
                     if (pastReveal.size() <= 1) {
                         Card newlyDiscoveredCard = pastReveal.get(0);
                         if (!otherNewlyDeducedCards.contains(newlyDiscoveredCard)) {
-                            cardsDeducedNotSolution.add(newlyDeducedCard);
-                            otherPlayerHands.get(cardOwner).add(newlyDeducedCard);
-                            otherNewlyDeducedCards.add(newlyDeducedCard);
+                            cardsDeducedNotSolution.add(newlyDiscoveredCard);
+                            otherPlayerHands.get(cardOwner).add(newlyDiscoveredCard);
+                            otherNewlyDeducedCards.add(newlyDiscoveredCard);
                             otherNewlyDeducedCardsOwner.add(cardOwner);
                         }
                         toRemove.add(pastReveal);
