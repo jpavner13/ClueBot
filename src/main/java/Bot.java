@@ -190,7 +190,7 @@ public class Bot extends Entity {
 
     // Called when a new card is deduced to see if any others can be deduced as well
     // This method assumes other players try to show the minimum amount of cards
-    private void updateInsights(String playerName, Card newlyDeducedCard) {
+    private void updateInsights(String playerName, Card deducedCard) {
         // Stored for recursive calls, I know two arrayLists is wack, but it's less complicated than hashing
         ArrayList<Card> otherNewlyDeducedCards = new ArrayList<>();
         ArrayList<String> otherNewlyDeducedCardsOwner = new ArrayList<>();
@@ -200,17 +200,17 @@ public class Bot extends Entity {
 
             for (ArrayList<Card> pastReveal : guessSet.getValue()) {
                 String cardOwner = guessSet.getKey();
-                if (pastReveal.contains(newlyDeducedCard) && cardOwner.equals(playerName)) {
+                if (pastReveal.contains(deducedCard) && cardOwner.equals(playerName)) {
                     toRemove.add(pastReveal);
                 }
-                else if (pastReveal.contains(newlyDeducedCard)) {
-                    pastReveal.remove(newlyDeducedCard);
+                else if (pastReveal.contains(deducedCard)) {
+                    pastReveal.remove(deducedCard);
                     if (pastReveal.size() <= 1) {
                         Card newlyDiscoveredCard = pastReveal.get(0);
                         if (!otherNewlyDeducedCards.contains(newlyDiscoveredCard)) {
-                            cardsDeducedNotSolution.add(newlyDeducedCard);
-                            otherPlayerHands.get(cardOwner).add(newlyDeducedCard);
-                            otherNewlyDeducedCards.add(newlyDeducedCard);
+                            cardsDeducedNotSolution.add(newlyDiscoveredCard);
+                            otherPlayerHands.get(cardOwner).add(newlyDiscoveredCard);
+                            otherNewlyDeducedCards.add(newlyDiscoveredCard);
                             otherNewlyDeducedCardsOwner.add(cardOwner);
                         }
                         toRemove.add(pastReveal);
