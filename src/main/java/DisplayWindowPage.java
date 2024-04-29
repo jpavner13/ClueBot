@@ -139,6 +139,8 @@ public class DisplayWindowPage {
                             if(Objects.equals(movingPlayerName, bot.getPlayerName())){
                                 currCol = finalCol;
                                 currRow = finalRow;
+                                int[] newPosition = {finalRow, finalCol};
+                                bot.setBoardPosition(newPosition);
                             }
 
                             lastSelectedCell.setText(gameBoard.getTileName(lastSelectedCellRow, lastSelectedCellCol));
