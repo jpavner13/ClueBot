@@ -273,13 +273,13 @@ public class DisplayWindowPage {
 
                 System.out.print("Moving from " + currRow + ", " + currCol + " to ");
 
-                bot.setMovementTarget(12,19);
+                bot.setMovementTarget(19, 12);
                 bot.executeOptimalMovements(totalRoll);
 
                 int[] newPos = bot.getBoardPosition();
 
-                currRow = newPos[0];
-                currCol = newPos[1];
+                currRow = newPos[1];
+                currCol = newPos[0];
 
                 Component[] components = panel.getComponents();
                 JButton desiredButton = (JButton) components[currRow * 24 + currCol];

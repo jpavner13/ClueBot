@@ -387,7 +387,7 @@ public class Bot extends Entity {
                 frontier.add(move);
             }
 
-            if (consider.x() == this.getMovementTarget()[0] && consider.y() == this.getMovementTarget()[1])
+            if (consider.x() == this.getMovementTarget()[1] && consider.y() == this.getMovementTarget()[0])
             {
                 break;
             }
@@ -398,7 +398,7 @@ public class Bot extends Entity {
         List<Position> optimalMoves = new Stack<>();
 
         // If the target doesn't exist as a to-node in the parentsAndPositions array, return an empty stack, don't even bother looking.
-        if (!this.doesVisitedContainElement(parentsAndPositions, new Position(this.getMovementTarget()[0], this.getMovementTarget()[1]), 1))
+        if (!this.doesVisitedContainElement(parentsAndPositions, new Position(this.getMovementTarget()[1], this.getMovementTarget()[0]), 1))
         {
             return optimalMoves;
         }
@@ -422,7 +422,7 @@ public class Bot extends Entity {
 
     }
 
-    public void setMovementTarget(int x, int y)
+    public void setMovementTarget(int y, int x)
     {
         targetXPosition = x;
         targetYPosition = y;
@@ -430,7 +430,7 @@ public class Bot extends Entity {
 
     public int[] getMovementTarget()
     {
-        int[] target = {targetXPosition, targetYPosition};
+        int[] target = {targetYPosition, targetXPosition};
         return target;
     }
 
