@@ -261,7 +261,7 @@ public class Bot extends Entity {
     }
 
     // Returns the adjacent moves of any location x and y.
-    private List<Position> getAdjacentMoves(int x, int y)
+    private List<Position> getAdjacentMoves(int y, int x)
     {
         GameBoard board = GameBoard.getInstance();
         String[][] boardArray = board.getBoard();
@@ -278,7 +278,7 @@ public class Bot extends Entity {
                 ((boardArray[y][x - 1].equals("Empty")) ||
                         boardArray[y][x - 1].contains("Door")) )
         {
-            Position move = new Position(x - 1, y);
+            Position move = new Position(y, x - 1);
             possibleMoves.add(move);
         }
 
@@ -287,25 +287,25 @@ public class Bot extends Entity {
                 (boardArray[y - 1][x].equals("Empty") ||
                         boardArray[y - 1][x].contains("Door")) )
         {
-            Position move = new Position(x, y - 1);
+            Position move = new Position(y - 1, x);
             possibleMoves.add(move);
         }
 
         // Move right / east.
-        if ( (x < boardWidth - 2) &&
+        if ( (x < boardWidth - 1) &&
                 (boardArray[y][x + 1].equals("Empty") ||
                         boardArray[y][x + 1].contains("Door")) )
         {
-            Position move = new Position(x + 1, y);
+            Position move = new Position(y, x + 1);
             possibleMoves.add(move);
         }
 
         // Move down / south.
-        if ( (y < boardHeight - 2) &&
+        if ( (y < boardHeight - 1) &&
                 (boardArray[y + 1][x].equals("Empty") ||
                         boardArray[y + 1][x].contains("Door")) )
         {
-            Position move = new Position(x, y + 1);
+            Position move = new Position(y + 1, x);
             possibleMoves.add(move);
         }
 
@@ -323,8 +323,8 @@ public class Bot extends Entity {
                 break;
             }
 
-            Position currentMove = moves.remove(moves.size()-1);
-            int[] positionToGoTo = {currentMove.x(), currentMove.y()};
+            Position currentMove = moves.remove(moves.size() - 1);
+            int[] positionToGoTo = {currentMove.y(), currentMove.x()};
 
             this.setBoardPosition(positionToGoTo);
         }
@@ -364,7 +364,7 @@ public class Bot extends Entity {
 
         Queue<Position> frontier = new LinkedList<>();
 
-        Position currentPosition = new Position(this.getBoardPosition()[1], this.getBoardPosition()[0]);
+        Position currentPosition = new Position(this.getBoardPosition()[0], this.getBoardPosition()[1]);
 
         frontier.add(currentPosition);
 
@@ -378,7 +378,7 @@ public class Bot extends Entity {
                 continue;
             }
 
-            List<Position> movesHere = this.getAdjacentMoves(consider.x(), consider.y());
+            List<Position> movesHere = this.getAdjacentMoves(consider.y(), consider.x());
 
             for (Position move : movesHere)
             {
@@ -387,7 +387,7 @@ public class Bot extends Entity {
                 frontier.add(move);
             }
 
-            if (consider.x() == this.getMovementTarget()[0] && consider.y() == this.getMovementTarget()[1])
+            if (consider.x() == this.getMovementTarget()[1] && consider.y() == this.getMovementTarget()[0])
             {
                 break;
             }
@@ -403,7 +403,9 @@ public class Bot extends Entity {
             return optimalMoves;
         }
 
-        Position pathPosition = new Position(parentsAndPositions.get(parentsAndPositions.size()-1)[0].x(), parentsAndPositions.get(parentsAndPositions.size()-1)[0].y());
+        Position[] lastPosition = parentsAndPositions.get(parentsAndPositions.size()-1);
+        Position pathPosition = new Position(lastPosition[0].y(), lastPosition[0].x());
+
         while (pathPosition != null && (pathPosition.x() != currentPosition.x()) || (pathPosition.y() != currentPosition.y()))
         {
             optimalMoves.add(pathPosition);
@@ -422,7 +424,7 @@ public class Bot extends Entity {
 
     }
 
-    public void setMovementTarget(int x, int y)
+    public void setMovementTarget(int y, int x)
     {
         targetXPosition = x;
         targetYPosition = y;
@@ -430,7 +432,7 @@ public class Bot extends Entity {
 
     public int[] getMovementTarget()
     {
-        int[] target = {targetXPosition, targetYPosition};
+        int[] target = {targetYPosition, targetXPosition};
         return target;
     }
 
