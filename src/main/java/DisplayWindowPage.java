@@ -81,8 +81,9 @@ public class DisplayWindowPage {
     int lastSelectedCellRow, lastSelectedCellCol;
     Color[][] origionalColor = new Color[29][24];
     String movingPlayerName = null;
-
     Bot bot;
+    int currRow, currCol;
+    JButton botButton = null;
 
 
     DisplayWindowPage(Bot newBot, ArrayList<Card> allCards, ArrayList<Player> allPlayers) throws MalformedURLException, PropertyVetoException {
@@ -120,7 +121,6 @@ public class DisplayWindowPage {
                         JButton clickedCell = (JButton) e.getSource();
                         String playerName = clickedCell.getText();
 
-
                         if (!isMovingPlayer) {
                             if(isPlayer(playerName)) {
                                 isMovingPlayer = true;
@@ -133,6 +133,13 @@ public class DisplayWindowPage {
                         } else {
                             clickedCell.setText(movingPlayerName);
                             clickedCell.setBackground(lastSelectedCell.getBackground());
+
+                            botButton = clickedCell;
+
+                            if(Objects.equals(movingPlayerName, bot.getPlayerName())){
+                                currCol = finalCol;
+                                currRow = finalRow;
+                            }
 
                             lastSelectedCell.setText(gameBoard.getTileName(lastSelectedCellRow, lastSelectedCellCol));
                             lastSelectedCell.setBackground(origionalColor[lastSelectedCellRow][lastSelectedCellCol]);
@@ -213,6 +220,12 @@ public class DisplayWindowPage {
                         break;
                 }
 
+                if(labelText.equals(bot.getPlayerName())){
+                    currRow = finalRow;
+                    currCol = finalCol;
+                    botButton = label;
+                }
+
                 origionalColor[i][j] = label.getBackground();
 
                 panel.add(label);
@@ -244,7 +257,37 @@ public class DisplayWindowPage {
                 guessFrame.setBounds(200, 200, 600, 400);
                 guessFrame.setVisible(true);
 
-                // CALL function to move here
+                // CALL function to move here (use currRow and currCol as inputs and update them on output)
+
+                int roll1 = 6;
+                int roll2 = 6;
+                int totalRoll = roll1 + roll2;
+
+                JButton oldButton = botButton;
+                if(oldButton != null) {
+                    oldButton.setText(gameBoard.getTileName(currRow, currCol));
+                    oldButton.setBackground(origionalColor[currRow][currCol]);
+                }
+
+                System.out.print("Moving from " + currRow + ", " + currCol + " to ");
+
+                bot.setMovementTarget(19,12);
+                bot.executeOptimalMovements(totalRoll);
+
+                int[] newPos = bot.getBoardPosition();
+
+                currRow = newPos[1];
+                currCol = newPos[0];
+
+                Component[] components = panel.getComponents();
+                JButton desiredButton = (JButton) components[currRow * 24 + currCol];
+
+                desiredButton.setText(bot.getPlayerName());
+                desiredButton.setBackground(new Color(222, 222, 11));
+
+                botButton = desiredButton;
+
+                System.out.println(currRow + ", " + currCol);
 
                 String guessLabelText = ("<html><style>h1{text-align:center;}</style><div text-align:center;><h1><u><b>Guess Made:</b></u></h1><br>");
                 JLabel guessLabel = new JLabel();
@@ -294,8 +337,8 @@ public class DisplayWindowPage {
                 }
 
                 String guessText = ("<html><div style='text-align: center; line-height: 1;'><font size='5'><br><b>"+ suspectGuess + "</b><br>" +
-                                    "<html><div style='text-align: center; line-height: 1;'><font size='5'><br><b>"+ weaponGuess + "</b><br>" +
-                                    "<html><div style='text-align: center; line-height: 1;'><font size='5'><br><b>"+ roomGuess + "</b><br>");
+                        "<html><div style='text-align: center; line-height: 1;'><font size='5'><br><b>"+ weaponGuess + "</b><br>" +
+                        "<html><div style='text-align: center; line-height: 1;'><font size='5'><br><b>"+ roomGuess + "</b><br>");
 
                 if(Objects.equals(suspectGuess, "Empty") && (Objects.equals(weaponGuess, "Empty") && (Objects.equals(roomGuess, "Empty")))) {
                     guessText = ("<html><div style='text-align: center; line-height: 1;'><font size='5'><br><b>"+ "No Guess Made" + "</b><br>");
