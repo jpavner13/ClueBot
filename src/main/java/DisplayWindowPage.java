@@ -5,10 +5,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.beans.PropertyVetoException;
+import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Random;
 
 public class DisplayWindowPage {
     JFrame frame = new JFrame();
@@ -260,9 +262,10 @@ public class DisplayWindowPage {
                 guessFrame.setVisible(true);
 
                 // CALL function to move here (use currRow and currCol as inputs and update them on output)
+                Random random = new Random();
 
-                int roll1 = 6;
-                int roll2 = 6;
+                int roll1 = random.nextInt(6) + 1;
+                int roll2 = random.nextInt(6) + 1;
                 int totalRoll = roll1 + roll2;
 
                 JButton oldButton = botButton;
@@ -273,13 +276,17 @@ public class DisplayWindowPage {
 
                 System.out.print("Moving from " + currRow + ", " + currCol + " to ");
 
-                bot.setMovementTarget(8, 22);
+                // CALL function to get the best target door
+                ArrayList<Card> roomCandidates = bot.getTargetRooms();
+                int[] closestDoor = findClosestDoor(roomCandidates);
+
+                bot.setMovementTarget(closestDoor[0], closestDoor[1]);
                 bot.executeOptimalMovements(totalRoll);
 
                 int[] newPos = bot.getBoardPosition();
 
-                currRow = newPos[1];
-                currCol = newPos[0];
+                currRow = newPos[0];
+                currCol = newPos[1];
 
                 Component[] components = panel.getComponents();
                 JButton desiredButton = (JButton) components[currRow * 24 + currCol];
@@ -565,5 +572,24 @@ public class DisplayWindowPage {
     public static void eliminateCard(String cardName){
         cardListText = cardListText.replace(cardName, "<font color='red'><s>" + cardName + "</s></font>");
         cardList.setText(cardListText);
+    }
+
+    public int[] findClosestDoor(ArrayList<Card> rooms){
+        int[] closestDoor = null;
+        int closestDistance = Integer.MAX_VALUE;
+        for(Card room : rooms) {
+            for (int i = 0; i < 29; i++) {
+                for (int j = 0; j < 24; j++) {
+                    if (Objects.equals(gameBoard.getTileName(i, j), (room.getCardName() + " Door"))){
+                        int distance = Math.abs(currCol - j) + Math.abs(currRow - i);
+                        if(distance < closestDistance){
+                            closestDoor = new int[]{i, j};
+                            closestDistance = distance;
+                        }
+                    }
+                }
+            }
+        }
+        return closestDoor;
     }
 }
