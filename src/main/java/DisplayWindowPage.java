@@ -276,8 +276,8 @@ public class DisplayWindowPage {
 
                 int[] newPos = bot.getBoardPosition();
 
-                currRow = newPos[1];
-                currCol = newPos[0];
+                currRow = newPos[0];
+                currCol = newPos[1];
 
                 Component[] components = panel.getComponents();
                 JButton desiredButton = (JButton) components[currRow * 24 + currCol];
