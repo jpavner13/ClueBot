@@ -278,8 +278,8 @@ public class DisplayWindowPage {
 
                 int[] newPos = bot.getBoardPosition();
 
-                currRow = newPos[0];
-                currCol = newPos[1];
+                currRow = newPos[1];
+                currCol = newPos[0];
 
                 Component[] components = panel.getComponents();
                 JButton desiredButton = (JButton) components[currRow * 24 + currCol];
@@ -322,8 +322,8 @@ public class DisplayWindowPage {
                 String roomName = null;
                 Card roomCard = null;
                 String tileName = gameBoard.getTileName(row, col);
-                if(isRoom(tileName)) {
-                    roomName = gameBoard.getTileName(row, col);
+                if(isRoomDoor(tileName)) {
+                    roomName = gameBoard.getTileName(row, col).replaceAll(" Door", "");
                     for(Card card : allCards){
                         if (Objects.equals(card.getCardName(), roomName)){
                             roomCard = card;
@@ -527,8 +527,8 @@ public class DisplayWindowPage {
         return(Objects.equals(playerName, "Mustard") || Objects.equals(playerName, "Scarlet") || Objects.equals(playerName, "White") || Objects.equals(playerName, "Green") || Objects.equals(playerName, "Peacock") || Objects.equals(playerName, "Plum"));
     }
 
-    private boolean isRoom(String roomName) {
-        return(Objects.equals(roomName, "Spa") || Objects.equals(roomName, "Theater") || Objects.equals(roomName, "Living Room") || Objects.equals(roomName, "Observatory") || Objects.equals(roomName, "Patio") || Objects.equals(roomName, "Pool") || Objects.equals(roomName, "Hall") || Objects.equals(roomName, "Kitchen") || Objects.equals(roomName, "Dining Room") || Objects.equals(roomName, "Guest House"));
+    private boolean isRoomDoor(String roomName) {
+        return(Objects.equals(roomName, "Spa Door") || Objects.equals(roomName, "Theater Door") || Objects.equals(roomName, "Living Room Door") || Objects.equals(roomName, "Observatory Door") || Objects.equals(roomName, "Patio Door") || Objects.equals(roomName, "Pool Door") || Objects.equals(roomName, "Hall Door") || Objects.equals(roomName, "Kitchen Door") || Objects.equals(roomName, "Dining Room Door") || Objects.equals(roomName, "Guest House Door"));
     }
 
     public void addCardToHand(String newCard){
