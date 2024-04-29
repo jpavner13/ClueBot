@@ -364,7 +364,7 @@ public class Bot extends Entity {
 
         Queue<Position> frontier = new LinkedList<>();
 
-        Position currentPosition = new Position(this.getBoardPosition()[0], this.getBoardPosition()[1]);
+        Position currentPosition = new Position(this.getBoardPosition()[1], this.getBoardPosition()[0]);
 
         frontier.add(currentPosition);
 
@@ -438,7 +438,7 @@ public class Bot extends Entity {
     {
         int[] currPosition = this.getBoardPosition();
 
-        if ((currPosition[1] == targetYPosition) && (currPosition[0] == targetXPosition))
+        if ((currPosition[0] == targetYPosition) && (currPosition[1] == targetXPosition))
         {
             return true;
         }
