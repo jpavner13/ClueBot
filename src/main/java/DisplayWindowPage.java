@@ -271,7 +271,7 @@ public class DisplayWindowPage {
 
                 System.out.print("Moving from " + currRow + ", " + currCol + " to ");
 
-                bot.setMovementTarget(19,12);
+                bot.setMovementTarget(12,19);
                 bot.executeOptimalMovements(totalRoll);
 
                 int[] newPos = bot.getBoardPosition();
