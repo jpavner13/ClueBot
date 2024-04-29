@@ -31,7 +31,7 @@ public class DisplayWindowPage {
     String logGuessButtonText = ("<html><div style='text-align: center;'><font size='5'><u><b>Log Guess:</b></u><br>");
     JButton logGuessButton = new JButton();
     static String cardListText = ("<html><div style='text-align: center; line-height: 2;'><font size='5'><br><u><b>Suspects:</b></u><br>" +
-            "Miss Scarlett<br>" +
+            "Miss Scarlet<br>" +
             "Colonel Mustard<br>" +
             "Mrs. White<br>" +
             "Reverend Green<br>" +
@@ -274,6 +274,9 @@ public class DisplayWindowPage {
                     oldButton.setBackground(origionalColor[currRow][currCol]);
                 }
 
+                int oldCurrRow = currRow;
+                int oldCurrCol = currCol;
+
                 System.out.print("Moving from " + currRow + ", " + currCol + " to ");
 
                 // CALL function to get the best target door
@@ -356,6 +359,16 @@ public class DisplayWindowPage {
                 JEditorPane guessArea = new JEditorPane("text/html", guessText);
                 guessArea.setBounds(200, 45, 200, 150);
 
+                String rollText = ("<html><div style='text-align: center; line-height: 1;'><font size='5'><br><b>Total Roll:</b><br><br>" + totalRoll);
+                JEditorPane totalRollArea = new JEditorPane("text/html", rollText);
+                totalRollArea.setBounds(10, 45, 150, 120);
+                totalRollArea.setFocusable(false);
+
+                String moveText = ("<html><div style='text-align: center; line-height: 1;'><font size='5'><br><b>" + bot.getPlayerName() + " moved from (" + oldCurrRow + ", " + oldCurrCol + ") to (" + currRow + ", " + currCol + ")</b><br><br>");
+                JEditorPane moveArea = new JEditorPane("text/html", moveText);
+                moveArea.setBounds(440, 45, 150, 120);
+                moveArea.setFocusable(false);
+
                 String cardShownLabelText = ("<html><style>h1{text-align:center;}</style><div text-align:center;><font size='3'><u><b>Card Shown:</b></u><br>");
                 JLabel cardShownLabel = new JLabel(cardShownLabelText);
                 cardShownLabel.setBounds(50, 200, 200, 30);
@@ -377,38 +390,54 @@ public class DisplayWindowPage {
                 JButton closeButton = new JButton("Confirm");
                 closeButton.setBounds(200, 260, 200, 100);
                 closeButton.setOpaque(true);
+
+                boolean isInRoom = isRoomDoor(tileName);
+
+                if(!isInRoom){
+                    playerShowedLabel.setVisible(false);
+                    playerWhoShowed.setVisible(false);
+                    playerWhoShowed.setFocusable(false);
+                    cardShownLabel.setVisible(false);
+                    cardShown.setVisible(false);
+                    cardShown.setFocusable(false);
+                }
+
                 closeButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         guessFrame.setVisible(false);
 
-                        String cardSeen = (String) cardShown.getSelectedItem();
-                        Card seenCard = null;
-                        for(Card card : allCards){
-                            if (Objects.equals(card.getCardName(), cardSeen)){
-                                seenCard = card;
-                                break;
+                        if(isInRoom) {
+                            String cardSeen = (String) cardShown.getSelectedItem();
+                            Card seenCard = null;
+                            for (Card card : allCards) {
+                                if (Objects.equals(card.getCardName(), cardSeen)) {
+                                    seenCard = card;
+                                    break;
+                                }
                             }
-                        }
-                        String playerWhoShowedCard = (String) playerWhoShowed.getSelectedItem();
-                        Player playerShowing = null;
-                        for(Player player : allPlayers){
-                            if (Objects.equals(player.getPlayerName(), playerWhoShowedCard)){
-                                playerShowing = player;
+                            String playerWhoShowedCard = (String) playerWhoShowed.getSelectedItem();
+                            Player playerShowing = null;
+                            for (Player player : allPlayers) {
+                                if (Objects.equals(player.getPlayerName(), playerWhoShowedCard)) {
+                                    playerShowing = player;
+                                }
                             }
+
+                            // CALL Update Knowledge function here
+                            assert playerShowing != null;
+                            bot.getShownCard(seenCard, playerShowing);
+
+                            eliminateCards(bot);
+                            cardList.updateUI();
                         }
-
-                        // CALL Update Knowledge function here
-                        assert playerShowing != null;
-                        bot.getShownCard(seenCard, playerShowing);
-
-                        eliminateCard(cardSeen);
-                        cardList.updateUI();
                     }
                 });
 
                 guessFrame.add(closeButton);
                 guessFrame.add(guessLabel);
+                guessFrame.add(totalRollArea);
+                guessFrame.add(moveArea);
                 guessFrame.add(cardShownLabel);
                 guessFrame.add(cardShown);
                 guessFrame.add(playerShowedLabel);
@@ -494,7 +523,10 @@ public class DisplayWindowPage {
                 }
 
                 // CALL function to witness Guess
+                assert whoShowedCard != null;
                 bot.watchCardReveal(whoGuessedCard, whoShowedCard, roomCard, weaponsCard, suspectCard);
+
+                eliminateCards(bot);
             }
         });
 
@@ -541,7 +573,7 @@ public class DisplayWindowPage {
     public void addCardToHand(String newCard){
         cardsInHand.setText(cardsInHandString + newCard + "<br>");
         cardsInHandString = cardsInHandString + newCard + "<br>";
-        eliminateCard(newCard);
+        eliminateCards(bot);
     }
 
     protected static ImageIcon createImageIcon(String path, String description) {
@@ -569,9 +601,28 @@ public class DisplayWindowPage {
         return result;
     }
 
-    public static void eliminateCard(String cardName){
-        cardListText = cardListText.replace(cardName, "<font color='red'><s>" + cardName + "</s></font>");
-        cardList.setText(cardListText);
+    static ArrayList<Card> alreadyEliminated = new ArrayList<>();
+    public static void eliminateCards(Bot bot){
+        ArrayList<Card> cardsKnown = bot.getCardsDeducedNotSolution();
+        for(Card currCard : cardsKnown) {
+            if(!(alreadyEliminated.contains(currCard))) {
+                String cardName = currCard.getCardName();
+                alreadyEliminated.add(currCard);
+
+                String textToReplace = switch (cardName) {
+                    case "Scarlet" -> "Miss Scarlet";
+                    case "Mustard" -> "Colonel Mustard";
+                    case "White" -> "Mrs. White";
+                    case "Green" -> "Reverend Green";
+                    case "Peacock" -> "Mrs. Peacock";
+                    case "Plum" -> "Professor Plum";
+                    default -> cardName;
+                };
+
+                cardListText = cardListText.replace(textToReplace, "<font color='red'><s>" + textToReplace + "</s></font>");
+                cardList.setText(cardListText);
+            }
+        }
     }
 
     public int[] findClosestDoor(ArrayList<Card> rooms){

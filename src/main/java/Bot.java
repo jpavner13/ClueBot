@@ -20,6 +20,10 @@ public class Bot extends Entity {
         targetYPosition = 0;
     }
 
+    public ArrayList<Card> getCardsDeducedNotSolution(){
+        return cardsDeducedNotSolution;
+    }
+
     protected void seeOtherPlayers(ArrayList<Entity> allPlayers) {
         for (Entity player : allPlayers) {
             if (!Objects.equals(player.getPlayerName(), this.getPlayerName())) {
