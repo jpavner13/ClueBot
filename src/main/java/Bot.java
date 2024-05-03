@@ -8,6 +8,9 @@ public class Bot extends Entity {
     HashMap<String, ArrayList<ArrayList<Card>>> playersPastReveals;
     HashMap<String, ArrayList<Card>> cardsShownToOtherPlayers;
     int targetXPosition, targetYPosition;
+    // Solution known state
+    boolean solutionKnown;
+    Card poolCard;
 
     IBotDeductionStrategy botDeductionStrategy;
 
@@ -21,6 +24,7 @@ public class Bot extends Entity {
         targetXPosition = 0;
         targetYPosition = 0;
         botDeductionStrategy = deductionStrategy;
+        solutionKnown = false;
     }
 
     public ArrayList<Card> getCardsDeducedNotSolution(){
@@ -75,7 +79,6 @@ public class Bot extends Entity {
         Card suspectGuess = null;
         int numWeaponsPossible = 0;
         int numSuspectsPossible = 0;
-
         for (Card card : candidateCards) {
             if (card.getTypeOfCard() == CardTypes.WeaponCard) {
                 weaponGuess = card;
@@ -156,18 +159,34 @@ public class Bot extends Entity {
 
     public void watchCardReveal(Entity guesser, Entity reveler, Card roomGuessed, Card weaponGuessed, Card suspectGuessed)
     {
-        botDeductionStrategy.watchCardReveal(guesser, reveler, roomGuessed, weaponGuessed, suspectGuessed, this);
+        checkIfSolutionKnown();
+        if (!solutionKnown) {
+            botDeductionStrategy.watchCardReveal(guesser, reveler, roomGuessed, weaponGuessed, suspectGuessed, this);
+        }
     }
 
     void getShownCard(Card shownCard, Entity revealer) {
         botDeductionStrategy.getShownCard(shownCard, revealer, this);
     }
 
-
+    private void checkIfSolutionKnown() {
+        ArrayList<Card> candidateCards = new ArrayList<>(allPossibleCards);
+        candidateCards.removeAll(cardsDeducedNotSolution);
+        if (candidateCards.size() <= 3) {
+            solutionKnown = true;
+        }
+    }
 
     // Returns rooms still needed to deduce, or room in hand if solved, or solution if no room card in hand.
     protected ArrayList<Card> getTargetRooms() {
         ArrayList<Card> targetRooms = new ArrayList<>();
+
+        checkIfSolutionKnown();
+
+        if (solutionKnown) {
+            targetRooms.add(poolCard);
+            return targetRooms;
+        }
 
         // Remove cards known to be in players hands
         ArrayList<Card> candidateCards = new ArrayList<>(allPossibleCards);
@@ -195,6 +214,14 @@ public class Bot extends Entity {
         }
 
         return targetRooms;
+    }
+
+    void storePoolCard(Card poolCardToSet){
+        poolCard = poolCardToSet;
+    }
+
+    public boolean isSolutionKnown(){
+        return solutionKnown;
     }
 
     // Returns the adjacent moves of any location x and y.
