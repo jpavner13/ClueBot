@@ -88,56 +88,6 @@ public class GameplayActions {
                 return deck;
         }
 
-
-        protected static void makeGuess(Card roomCurrIn, Entity guesser, ArrayList<Player> players, ArrayList<Bot> bots, ArrayList<Card> allCards) {
-
-                ArrayList<Card> weaponAndSuspect = guesser.guess(roomCurrIn);
-                Card weaponGuessed = weaponAndSuspect.get(0);
-                Card suspectGuessed = weaponAndSuspect.get(1);
-
-                ArrayList<Entity> otherPlayers = new ArrayList<>();
-                otherPlayers.addAll(players);
-                otherPlayers.addAll(bots);
-
-                int guesserIndex = otherPlayers.indexOf(guesser);
-
-                int i = guesserIndex + 1;
-                while (i != guesserIndex) {
-                        if (i >= otherPlayers.size()) {
-                                i = 0;
-                        }
-                        else {
-                                Entity checkedPlayer = otherPlayers.get(i);
-                                ArrayList<Card> checkedPlayerHand = checkedPlayer.getHand();
-
-                                if (checkedPlayerHand.contains(roomCurrIn) || checkedPlayerHand.contains(weaponGuessed)
-                                        || checkedPlayerHand.contains(suspectGuessed)) {
-                                        Card shownCard = checkedPlayer.showCard(guesser, roomCurrIn, weaponGuessed, suspectGuessed);
-                                        guesser.getShownCard(shownCard, checkedPlayer);
-                                        for (Entity uninvoledPlayer : otherPlayers) {
-                                                if (uninvoledPlayer != checkedPlayer && uninvoledPlayer != guesser) {
-                                                        uninvoledPlayer.watchCardReveal(guesser, checkedPlayer, roomCurrIn, weaponGuessed, suspectGuessed);
-                                                }
-                                        }
-                                        break;
-                                }
-                                else {
-                                        i++;
-                                }
-                        }
-                }
-
-                // Move guessed player to room where guess was made
-                for (Entity player : otherPlayers) {
-                        if (player.getPlayerName() == suspectGuessed.getCardName()) {
-                                player.setBoardPosition(guesser.getBoardPosition());
-                                break;
-                        }
-                }
-
-
-        }
-
         public static void seeOtherPlayersAndPossibleCards(ArrayList<Player> players, ArrayList<Bot> bots, ArrayList<Card> allCards) {
                 ArrayList<Entity> allPlayers = new ArrayList<>();
                 allPlayers.addAll(players);
