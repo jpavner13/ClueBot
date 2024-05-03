@@ -1,7 +1,9 @@
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
 import java.util.ArrayList;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 public class BotGuessTests {
@@ -16,7 +18,7 @@ public class BotGuessTests {
         combinedDeck.addAll(sortedDeck.get(1));
         combinedDeck.addAll(sortedDeck.get(2));
 
-        Bot testBot = new Bot("Scarlet", new int[] {0,0});
+        Bot testBot = new Bot("Scarlet", new int[] {0,0}, new BotAllAvailableInfoDeductionStrategy());
 
         testBot.addCardToHand(sortedDeck.get(0).get(0));
         testBot.addCardToHand(sortedDeck.get(1).get(0));
@@ -50,7 +52,7 @@ public class BotGuessTests {
         combinedDeck.addAll(sortedDeck.get(1));
         combinedDeck.addAll(sortedDeck.get(2));
 
-        Bot testBot = new Bot("Scarlet", new int[] {0,0});
+        Bot testBot = new Bot("Scarlet", new int[] {0,0}, new BotAllAvailableInfoDeductionStrategy());
 
         // Bot has no hand in this scenario
 
@@ -87,7 +89,7 @@ public class BotGuessTests {
         combinedDeck.addAll(sortedDeck.get(1));
         combinedDeck.addAll(sortedDeck.get(2));
 
-        Bot testBot = new Bot("Scarlet", new int[] {0,0});
+        Bot testBot = new Bot("Scarlet", new int[] {0,0}, new BotAllAvailableInfoDeductionStrategy());
 
         testBot.addCardToHand(sortedDeck.get(0).get(0));
         testBot.addCardToHand(sortedDeck.get(1).get(0));

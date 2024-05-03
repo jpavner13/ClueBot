@@ -17,7 +17,7 @@ public class BotWatchRevealTests {
         combinedDeck.addAll(sortedDeck.get(1));
         combinedDeck.addAll(sortedDeck.get(2));
 
-        Bot testBot = new Bot("Scarlet", new int[] {0,0});
+        Bot testBot = new Bot("Scarlet", new int[] {0,0}, new BotAllAvailableInfoDeductionStrategy());
 
         testBot.addCardToHand(sortedDeck.get(0).get(0));
         testBot.addCardToHand(sortedDeck.get(1).get(0));
@@ -74,7 +74,7 @@ public class BotWatchRevealTests {
         combinedDeck.addAll(sortedDeck.get(1));
         combinedDeck.addAll(sortedDeck.get(2));
 
-        Bot testBot = new Bot("Scarlet", new int[] {0,0});
+        Bot testBot = new Bot("Scarlet", new int[] {0,0}, new BotAllAvailableInfoDeductionStrategy());
 
         testBot.addCardToHand(sortedDeck.get(0).get(0));
         testBot.addCardToHand(sortedDeck.get(1).get(0));

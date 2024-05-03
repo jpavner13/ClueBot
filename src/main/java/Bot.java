@@ -9,7 +9,9 @@ public class Bot extends Entity {
     HashMap<String, ArrayList<Card>> cardsShownToOtherPlayers;
     int targetXPosition, targetYPosition;
 
-    public Bot(String name, int[] startingBoardPosition) {
+    IBotDeductionStrategy botDeductionStrategy;
+
+    public Bot(String name, int[] startingBoardPosition, IBotDeductionStrategy deductionStrategy) {
         super(name, startingBoardPosition);
         otherPlayerHands = new HashMap<>();
         allPossibleCards = new ArrayList<>();
@@ -18,6 +20,7 @@ public class Bot extends Entity {
         cardsShownToOtherPlayers = new HashMap<>();
         targetXPosition = 0;
         targetYPosition = 0;
+        botDeductionStrategy = deductionStrategy;
     }
 
     public ArrayList<Card> getCardsDeducedNotSolution(){
@@ -151,86 +154,16 @@ public class Bot extends Entity {
         return getHand().get(0);
     }
 
-    @Override
-    void getShownCard(Card shownCard, Entity reveler) {
-        otherPlayerHands.get(reveler.getPlayerName()).add(shownCard);
-        cardsDeducedNotSolution.add(shownCard);
-        updateInsights(reveler.getPlayerName(), shownCard);
-        // V This can be replaced by an observer pattern later
-        System.out.println("I, " + getPlayerName() + " was just shown " + shownCard.getCardName() + " by " + reveler.getPlayerName());
+    public void watchCardReveal(Entity guesser, Entity reveler, Card roomGuessed, Card weaponGuessed, Card suspectGuessed)
+    {
+        botDeductionStrategy.watchCardReveal(guesser, reveler, roomGuessed, weaponGuessed, suspectGuessed, this);
     }
 
-    @Override
-    void watchCardReveal(Entity guesser, Entity reveler, Card roomGuessed, Card weaponGuessed, Card suspectGuessed) {
-
-        ArrayList<Card> guessCards = new ArrayList<>();
-        guessCards.add(roomGuessed);
-        guessCards.add(weaponGuessed);
-        guessCards.add(suspectGuessed);
-
-        // Check if bot already knows revealing player has one of the guessed cards, skip if so
-        if (!otherPlayerHands.get(reveler.getPlayerName()).contains(roomGuessed) || !otherPlayerHands.get(reveler.getPlayerName()).contains(weaponGuessed)
-                || !otherPlayerHands.get(reveler.getPlayerName()).contains(suspectGuessed)) {
-            int numKnownCards = 0;
-            for (Card card : guessCards) {
-                if (cardsDeducedNotSolution.contains(card)) {
-                    numKnownCards++;
-                }
-            }
-            guessCards.removeAll(cardsDeducedNotSolution);
-            // Check if bot knows what card was shown, skip if all cards already known
-            if (numKnownCards <= 1) { // Card shown unknown
-                playersPastReveals.get(reveler.getPlayerName()).add(guessCards);
-            }
-            else if (numKnownCards == 2) { // Card shown deduced
-                Card newlyDeducedCard = guessCards.get(0);
-                cardsDeducedNotSolution.add(newlyDeducedCard);
-                otherPlayerHands.get(reveler.getPlayerName()).add(newlyDeducedCard);
-                updateInsights(reveler.getPlayerName(), newlyDeducedCard);
-            }
-
-        }
-
-        System.out.println("I, " + getPlayerName() + " just saw " + guesser.getPlayerName() + " get shown a card by " + reveler.getPlayerName() +
-                " when the guess was: " + roomGuessed.getCardName() + ", " + weaponGuessed.getCardName() + ", " + suspectGuessed.getCardName() + ".");
+    void getShownCard(Card shownCard, Entity revealer) {
+        botDeductionStrategy.getShownCard(shownCard, revealer, this);
     }
 
-    // Called when a new card is deduced to see if any others can be deduced as well
-    // This method assumes other players try to show the minimum amount of cards
-    private void updateInsights(String playerName, Card deducedCard) {
-        // Stored for recursive calls, I know two arrayLists is wack, but it's less complicated than hashing
-        ArrayList<Card> otherNewlyDeducedCards = new ArrayList<>();
-        ArrayList<String> otherNewlyDeducedCardsOwner = new ArrayList<>();
 
-        for (Map.Entry<String, ArrayList<ArrayList<Card>>> guessSet : playersPastReveals.entrySet()) {
-            List<ArrayList<Card>> toRemove = new ArrayList<>();
-
-            for (ArrayList<Card> pastReveal : guessSet.getValue()) {
-                String cardOwner = guessSet.getKey();
-                if (pastReveal.contains(deducedCard) && cardOwner.equals(playerName)) {
-                    toRemove.add(pastReveal);
-                }
-                else if (pastReveal.contains(deducedCard)) {
-                    pastReveal.remove(deducedCard);
-                    if (pastReveal.size() <= 1) {
-                        Card newlyDiscoveredCard = pastReveal.get(0);
-                        if (!otherNewlyDeducedCards.contains(newlyDiscoveredCard)) {
-                            cardsDeducedNotSolution.add(newlyDiscoveredCard);
-                            otherPlayerHands.get(cardOwner).add(newlyDiscoveredCard);
-                            otherNewlyDeducedCards.add(newlyDiscoveredCard);
-                            otherNewlyDeducedCardsOwner.add(cardOwner);
-                        }
-                        toRemove.add(pastReveal);
-                    }
-                }
-            }
-            guessSet.getValue().removeAll(toRemove);
-        }
-        for (int i =  0 ; i < otherNewlyDeducedCards.size(); i++) {
-            updateInsights(otherNewlyDeducedCardsOwner.get(i), otherNewlyDeducedCards.get(i));
-        }
-
-    }
 
     // Returns rooms still needed to deduce, or room in hand if solved, or solution if no room card in hand.
     protected ArrayList<Card> getTargetRooms() {

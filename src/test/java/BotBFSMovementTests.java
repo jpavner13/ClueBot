@@ -11,9 +11,9 @@ public class BotBFSMovementTests {
         int roll1 = 2;
         int roll2 = 1;
 
-        int[] startingPosition = {18, 28};
-        int[] targetPosition = {18, 25};
-        Bot bot = new Bot("bot", startingPosition);
+        int[] startingPosition = {28, 18};
+        int[] targetPosition = {25, 18};
+        Bot bot = new Bot("bot", startingPosition, new BotAllAvailableInfoDeductionStrategy());
 
         // Simulate 3 optimal moves
         bot.setMovementTarget(targetPosition[0], targetPosition[1]);
@@ -34,9 +34,9 @@ public class BotBFSMovementTests {
         int roll1 = 3;
         int roll2 = 99;
 
-        int[] startingPosition = {18, 28};
-        int[] targetPosition = {18, 25};
-        Bot bot = new Bot("bot", startingPosition);
+        int[] startingPosition = {28, 18};
+        int[] targetPosition = {25, 18};
+        Bot bot = new Bot("bot", startingPosition, new BotAllAvailableInfoDeductionStrategy());
 
         // Simulate 3 optimal moves
         bot.setMovementTarget(targetPosition[0], targetPosition[1]);
@@ -56,10 +56,10 @@ public class BotBFSMovementTests {
         // As many moves as necessary to prove this point.
         int roll1 = 1000;
 
-        int[] startingPosition = {18, 28};
+        int[] startingPosition = {28, 18};
         // Impossible target.
-        int[] targetPosition = {-100, 25};
-        Bot bot = new Bot("bot", startingPosition);
+        int[] targetPosition = {25, -100};
+        Bot bot = new Bot("bot", startingPosition, new BotAllAvailableInfoDeductionStrategy());
 
         // Simulate 3 optimal moves
         bot.setMovementTarget(targetPosition[0], targetPosition[1]);
@@ -75,10 +75,10 @@ public class BotBFSMovementTests {
         // As many moves as necessary to prove this point.
         int roll1 = 1;
 
-        int[] startingPosition = {18, 28};
+        int[] startingPosition = {28, 18};
         // Impossible target.
-        int[] targetPosition = {18, 25};
-        Bot bot = new Bot("bot", startingPosition);
+        int[] targetPosition = {25, 18};
+        Bot bot = new Bot("bot", startingPosition, new BotAllAvailableInfoDeductionStrategy());
 
         // Simulate 3 optimal moves
         bot.setMovementTarget(targetPosition[0], targetPosition[1]);
@@ -95,12 +95,12 @@ public class BotBFSMovementTests {
         int roll1 = 2;
         int roll2 = 2;
 
-        int[] startingPosition = {18, 27};
+        int[] startingPosition = {27, 18};
         // Impossible target.
-        int[] targetPosition1 = {18, 24};
-        int[] targetPosition2 = {18, 27};
+        int[] targetPosition1 = {24, 18};
+        int[] targetPosition2 = {27, 18};
 
-        Bot bot = new Bot("bot", startingPosition);
+        Bot bot = new Bot("bot", startingPosition, new BotAllAvailableInfoDeductionStrategy());
 
         // Simulate 3 optimal moves
         bot.setMovementTarget(targetPosition1[0], targetPosition1[1]);
