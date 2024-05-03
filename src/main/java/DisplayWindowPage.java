@@ -67,13 +67,12 @@ public class DisplayWindowPage {
 
     static GameBoard gameBoard;
     GameLogic gameLogic = new GameLogic();
-    DisplayElementBuilder elementBuilder = new DisplayElementBuilder();
+    DisplayElementFactory elementFactory = new DisplayElementFactory();
 
 
     DisplayWindowPage(Bot newBot, ArrayList<Card> allCards, ArrayList<Player> allPlayers) throws MalformedURLException, PropertyVetoException {
         bot = newBot;
         frame = new JFrame();
-        panel = new JPanel();
         playTurnButton = new JButton();
         whoGuessed = new JComboBox(suspects);
         suspectList = new JComboBox(suspects);
@@ -94,7 +93,6 @@ public class DisplayWindowPage {
         origionalColor = new Color[29][24];
 
         frame.setLayout(null);
-        panel.setLayout(new GridLayout(29, 24));
         playTurnButton.setLayout(null);
 
         String playTurnButtonText = ("<html><div style='text-align: center; line-height: 2;'><font size='5'><u><b>Play Turn:</b></u><br>");
@@ -115,8 +113,8 @@ public class DisplayWindowPage {
         whereLabel.setText(whereLabelText);
         showerLabel.setText(showerLabelText);
 
-        elementBuilder.addBackground(background, frame);
-        elementBuilder.buildBoard(gameBoard, isMovingPlayer, gameLogic, lastSelectedCell, bot, origionalColor, panel);
+        elementFactory.addBackground(background, frame);
+        panel = elementFactory.buildBoard(gameBoard, gameLogic, bot, origionalColor);
 
         cardList.setEditable(false);
         cardList.setFocusable(false);

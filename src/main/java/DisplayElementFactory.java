@@ -7,8 +7,11 @@ import java.awt.event.ComponentEvent;
 import java.net.URL;
 import java.util.Objects;
 
-public class DisplayElementBuilder {
-    public void buildBoard(GameBoard gameBoard, boolean isMovingPlayer, GameLogic gameLogic, JButton lastSelectedCell, Bot bot, Color[][] origionalColor, JPanel panel){
+public class DisplayElementFactory {
+    public JPanel buildBoard(GameBoard gameBoard, GameLogic gameLogic, Bot bot, Color[][] origionalColor){
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(29, 24));
+
         int cellWidth = 5;
         int cellHeight = 5;
 
@@ -136,6 +139,8 @@ public class DisplayElementBuilder {
                 panel.setFocusable(true);
             }
         }
+
+        return panel;
     }
 
     public void addBackground(JLabel background, JFrame frame) {
