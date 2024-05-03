@@ -13,7 +13,7 @@ public class DealCardsTests {
         ArrayList<Bot> bots = new ArrayList<>();
 
         Player bob = new Player("Bob", new int[]{1, 10});
-        Bot robo = new Bot("Robo-Bob", new int[]{10, 1});
+        Bot robo = new Bot("Robo-Bob", new int[]{10, 1}, new BotAllAvailableInfoDeductionStrategy());
 
 
         players.add(bob);

@@ -3,10 +3,6 @@ import org.junit.jupiter.api.Test;
 import java.beans.PropertyVetoException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.Arrays;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ClueBotTests extends javax.swing.JFrame{
     @Test
@@ -15,7 +11,7 @@ public class ClueBotTests extends javax.swing.JFrame{
 
         String botName = "Mustard";
         int[] startingPos = {28, 7};
-        Bot bot = new Bot(botName, startingPos);
+        Bot bot = new Bot(botName, startingPos, new BotAllAvailableInfoDeductionStrategy());
 
         bots.add(bot);
 

@@ -1,7 +1,8 @@
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
 import java.util.ArrayList;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BotGetTargetRoomsTests {
 
@@ -15,7 +16,7 @@ public class BotGetTargetRoomsTests {
         combinedDeck.addAll(sortedDeck.get(1));
         combinedDeck.addAll(sortedDeck.get(2));
 
-        Bot testBot = new Bot("Scarlet", new int[] {0,0});
+        Bot testBot = new Bot("Scarlet", new int[] {0,0}, new BotAllAvailableInfoDeductionStrategy());
 
         // Add all cards but one option to deduced cards
         ArrayList<Card> deducedCardsNotSolution = new ArrayList<>();
