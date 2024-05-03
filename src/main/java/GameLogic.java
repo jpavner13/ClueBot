@@ -44,6 +44,15 @@ public class GameLogic {
 
         // CALL function to get the best target door
         ArrayList<Card> roomCandidates = bot.getTargetRooms();
+        String roomCurrIn = gameBoard.getTileName(currRow, currCol);
+        roomCurrIn = roomCurrIn.replace(" Door", "");
+        Card toRemove = null;
+        for (Card room : roomCandidates) {
+            if (room.getCardName().equals(roomCurrIn)) {
+                toRemove = room;
+            }
+        }
+        roomCandidates.remove(toRemove);
         int[] closestDoor = findClosestDoor(roomCandidates, gameBoard, currRow, currCol);
 
         bot.setMovementTarget(closestDoor[0], closestDoor[1]);

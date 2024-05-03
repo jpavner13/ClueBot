@@ -65,9 +65,27 @@ public class Bot extends Entity {
     @Override
     ArrayList<Card> guess(Card roomCurrIn) {
 
+        ArrayList<Card> botsGuess = new ArrayList<>();
+
         // Remove cards known to be in players hands
         ArrayList<Card> candidateCards = new ArrayList<>(allPossibleCards);
         candidateCards.removeAll(cardsDeducedNotSolution);
+
+        // Final guess, only possible to invoke in Pool
+        if (solutionKnown) {
+            for (Card card : candidateCards) {
+                if (card.getTypeOfCard().equals(CardTypes.WeaponCard)) {
+                    botsGuess.add(card);
+                }
+            }
+            for (Card card : candidateCards) {
+                if (card.getTypeOfCard().equals(CardTypes.SuspectCard)) {
+                    botsGuess.add(card);
+                }
+            }
+            botsGuess.add(roomCurrIn);
+            return botsGuess;
+        }
 
         ArrayList<Card> shuffledHand = new ArrayList<>(getHand());
 
@@ -106,7 +124,6 @@ public class Bot extends Entity {
             }
         }
 
-        ArrayList<Card> botsGuess = new ArrayList<>();
         botsGuess.add(weaponGuess);
         botsGuess.add(suspectGuess);
         botsGuess.add(roomCurrIn);
