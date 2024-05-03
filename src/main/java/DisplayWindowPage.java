@@ -288,8 +288,6 @@ public class DisplayWindowPage {
                 guessFrame.add(playerShowedLabel);
                 guessFrame.add(playerWhoShowed);
                 guessFrame.add(guessArea);
-
-                frame.add(guessFrame);
             }
         });
 

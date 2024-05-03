@@ -42,8 +42,6 @@ public class GameLogic {
         int oldCurrRow = currRow;
         int oldCurrCol = currCol;
 
-        System.out.print("Moving from " + currRow + ", " + currCol + " to ");
-
         // CALL function to get the best target door
         ArrayList<Card> roomCandidates = bot.getTargetRooms();
         int[] closestDoor = findClosestDoor(roomCandidates, gameBoard, currRow, currCol);
@@ -65,8 +63,6 @@ public class GameLogic {
 
         desiredButton.setText(bot.getPlayerName());
         desiredButton.setBackground(new Color(222, 222, 11));
-
-        System.out.println(currRow + ", " + currCol);
 
         return new int[]{totalRoll, oldCurrCol, oldCurrRow, currRow, currCol};
     }
