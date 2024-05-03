@@ -18,9 +18,10 @@ public class BotGetTargetRoomsTests {
 
         Bot testBot = new Bot("Scarlet", new int[] {0,0}, new BotAllAvailableInfoDeductionStrategy());
 
-        // Add all cards but one option to deduced cards
+
         ArrayList<Card> deducedCardsNotSolution = new ArrayList<>();
 
+        // Add all Room cards but three options to deduced cards
         for (int j = 0; j < sortedDeck.get(2).size() - 3; j ++) {
             deducedCardsNotSolution.add(sortedDeck.get(2).get(j));
         }

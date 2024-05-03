@@ -24,13 +24,23 @@ public class GameplayActions {
                 ArrayList<Card> shuffledDeck = new ArrayList<>();
 
                 for (ArrayList<Card> cardType : deck) {
-                    shuffledDeck.addAll(cardType);
+                        shuffledDeck.addAll(cardType);
                 }
+
+                //Remove "Pool" from valid solutions
+                int indexOfPoolCard = 0;
+                for (int i = 0; i < shuffledDeck.size(); i++) {
+                        if (shuffledDeck.get(i).getCardName().equals("Pool")) {
+                                indexOfPoolCard = i;
+                        }
+                }
+                Card poolCard = shuffledDeck.remove(indexOfPoolCard);
 
                 Collections.shuffle(shuffledDeck);
                 int cardsPerPlayer = Math.floorDiv(shuffledDeck.size(), totalPlayers);
 
                 for (Player player : players) {
+                        player.storePoolCard(poolCard);
                         for (int i = 0; i < cardsPerPlayer; i++) {
                                 player.addCardToHand(shuffledDeck.remove(0));
                         }

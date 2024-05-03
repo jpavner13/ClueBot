@@ -42,4 +42,6 @@ public abstract class Entity {
     abstract void seeOtherPlayers(ArrayList<Entity> allPlayers);
 
     abstract void seeDeck(ArrayList<Card> allCards);
+
+    abstract void storePoolCard(Card poolCard);
 }

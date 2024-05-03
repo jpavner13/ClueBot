@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Player extends Entity{
+    Card poolCard;
 
     public Player(String name, int[] startingBoardPosition) {
         super(name, startingBoardPosition);
@@ -26,6 +27,10 @@ public class Player extends Entity{
         }
         //Failsafe, this line should never be reached
         return getHand().get(0);
+    }
+
+    void storePoolCard(Card poolCardToSet){
+        poolCard = poolCardToSet;
     }
 
     //Todo this is a naive implementation. Change in later version.
