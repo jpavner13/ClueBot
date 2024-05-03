@@ -2,34 +2,28 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.beans.PropertyVetoException;
-import java.lang.reflect.Array;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Random;
 
 public class DisplayWindowPage {
-    JFrame frame = new JFrame();
-    JPanel panel = new JPanel();
-    String playTurnButtonText = ("<html><div style='text-align: center; line-height: 2;'><font size='5'><u><b>Play Turn:</b></u><br>");
-    JButton playTurnButton = new JButton();
-    //String[] suspects = {"Miss Scarlett", "Colonel Mustard", "Mrs. White", "Reverend Green", "Mrs. Peacock", "Professor Plum"};
+    Bot bot;
+
+    JFrame frame;
+    JPanel panel;
+    JButton playTurnButton, logGuessButton;
+    static JButton lastSelectedCell, botButton = null;
+    static JEditorPane cardList, cardsInHand;
+    JLabel logGuessLabel, guesserLabel, whoLabel, whatLabel, whereLabel, showerLabel;
+    static JLabel background;
+    JComboBox whoGuessed, suspectList, weaponsList, roomsList, whoShowed;
+
+
     String[] suspects = {"Scarlet", "Mustard", "White", "Green", "Peacock", "Plum"};
-    //String[] suspectsAndNull = {"Miss Scarlett", "Colonel Mustard", "Mrs. White", "Reverend Green", "Mrs. Peacock", "Professor Plum", "No One"};
     String[] suspectsAndNull = {"Scarlet", "Mustard", "White", "Green", "Peacock", "Plum", "No One"};
     String[] weapons = {"Rope", "Candlestick", "Knife", "Pistol", "Bat", "Dumbbell", "Trophy", "Poison", "Axe"};
     String[] rooms = {"Kitchen", "Patio", "Spa", "Dining Room", "Pool", "Theatre", "Living Room", "Guest House", "Hall", "Observatory"};
-    JComboBox whoGuessed = new JComboBox(suspects);
-    JComboBox suspectList = new JComboBox(suspects);
-    JComboBox weaponsList = new JComboBox(weapons);
-    JComboBox roomsList = new JComboBox(rooms);
-    JComboBox whoShowed = new JComboBox(suspectsAndNull);
-    String logGuessButtonText = ("<html><div style='text-align: center;'><font size='5'><u><b>Log Guess:</b></u><br>");
-    JButton logGuessButton = new JButton();
     static String cardListText = ("<html><div style='text-align: center; line-height: 2;'><font size='5'><br><u><b>Suspects:</b></u><br>" +
             "Miss Scarlet<br>" +
             "Colonel Mustard<br>" +
@@ -60,40 +54,57 @@ public class DisplayWindowPage {
             "Guest House<br>" +
             "Hall<br>" +
             "Observatory</font></div></html>");
-
-    static JEditorPane cardList = new JEditorPane("text/html", cardListText);
     String cardsInHandString = "<html><div style='text-align: center; line-height: 2;'><font size='5'><br><u><b>Cards In Hand:</b></u><br>";
-    JEditorPane cardsInHand = new JEditorPane("text/html", cardsInHandString);
-    String logGuessLabelText = ("<html><div style='text-align: center; line-height: 2;'><font size='5'><br><u><b>Log a Player Guess:</b></u><br>");
-    JLabel logGuessLabel = new JLabel();
-    String guesserLabelText = ("<html><div style='text-align: center; line-height: 2;'><font size='3'><b>Guesser:</b><br>");
-    JLabel guesserLabel = new JLabel();
-    String whoLabelText = ("<html><div style='text-align: center; line-height: 2;'><font size='3'><b>Who:</b><br>");
-    JLabel whoLabel = new JLabel();
-    String whatLabelText = ("<html><div style='text-align: center; line-height: 2;'><font size='3'><b>What:</b><br>");
-    JLabel whatLabel = new JLabel();
-    String whereLabelText = ("<html><div style='text-align: center; line-height: 2;'><font size='3'><b>Where:</b><br>");
-    JLabel whereLabel = new JLabel();
-    String showerLabelText = ("<html><div style='text-align: center; line-height: 2;'><font size='3'><b>Who Showed a Card?:</b><br>");
-    JLabel showerLabel = new JLabel();
-    JLabel background = new JLabel();
-    GameBoard gameBoard = new GameBoard();
-    boolean isMovingPlayer = false;
-    JButton lastSelectedCell = null;
-    int lastSelectedCellRow, lastSelectedCellCol;
-    Color[][] origionalColor = new Color[29][24];
-    String movingPlayerName = null;
-    Bot bot;
-    int currRow, currCol;
-    JButton botButton = null;
+
+
+    static Color[][] origionalColor;
+    static boolean isMovingPlayer = false;
+    static String movingPlayerName = null;
+    static int currRow, currCol;
+    static int lastSelectedCellRow, lastSelectedCellCol;
+
+
+
+    static GameBoard gameBoard;
+    GameLogic gameLogic = new GameLogic();
+    DisplayElementBuilder elementBuilder = new DisplayElementBuilder();
 
 
     DisplayWindowPage(Bot newBot, ArrayList<Card> allCards, ArrayList<Player> allPlayers) throws MalformedURLException, PropertyVetoException {
         bot = newBot;
+        frame = new JFrame();
+        panel = new JPanel();
+        playTurnButton = new JButton();
+        whoGuessed = new JComboBox(suspects);
+        suspectList = new JComboBox(suspects);
+        weaponsList = new JComboBox(weapons);
+        roomsList = new JComboBox(rooms);
+        whoShowed = new JComboBox(suspectsAndNull);
+        logGuessButton = new JButton();
+        logGuessLabel = new JLabel();
+        guesserLabel = new JLabel();
+        whoLabel = new JLabel();
+        whatLabel = new JLabel();
+        whereLabel = new JLabel();
+        showerLabel = new JLabel();
+        background = new JLabel();
+        gameBoard = new GameBoard();
+        cardsInHand = new JEditorPane("text/html", cardsInHandString);
+        cardList = new JEditorPane("text/html", cardListText);
+        origionalColor = new Color[29][24];
 
         frame.setLayout(null);
         panel.setLayout(new GridLayout(29, 24));
         playTurnButton.setLayout(null);
+
+        String playTurnButtonText = ("<html><div style='text-align: center; line-height: 2;'><font size='5'><u><b>Play Turn:</b></u><br>");
+        String logGuessButtonText = ("<html><div style='text-align: center;'><font size='5'><u><b>Log Guess:</b></u><br>");
+        String logGuessLabelText = ("<html><div style='text-align: center; line-height: 2;'><font size='5'><br><u><b>Log a Player Guess:</b></u><br>");
+        String guesserLabelText = ("<html><div style='text-align: center; line-height: 2;'><font size='3'><b>Guesser:</b><br>");
+        String whoLabelText = ("<html><div style='text-align: center; line-height: 2;'><font size='3'><b>Who:</b><br>");
+        String whatLabelText = ("<html><div style='text-align: center; line-height: 2;'><font size='3'><b>What:</b><br>");
+        String whereLabelText = ("<html><div style='text-align: center; line-height: 2;'><font size='3'><b>Where:</b><br>");
+        String showerLabelText = ("<html><div style='text-align: center; line-height: 2;'><font size='3'><b>Who Showed a Card?:</b><br>");
 
         playTurnButton.setText(playTurnButtonText);
         logGuessButton.setText(logGuessButtonText);
@@ -104,140 +115,8 @@ public class DisplayWindowPage {
         whereLabel.setText(whereLabelText);
         showerLabel.setText(showerLabelText);
 
-        ImageIcon icon = createImageIcon("background.jpeg", "Background Image");
-        background.setIcon(icon);
-
-        int cellWidth = 5;
-        int cellHeight = 5;
-
-        for (int i = 0; i < 29; i++) {
-            for (int j = 0; j < 24; j++) {
-                String labelText = gameBoard.getTileName(i, j);
-
-                JButton label = new JButton(labelText);
-                int finalRow = i;
-                int finalCol = j;
-                label.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        JButton clickedCell = (JButton) e.getSource();
-                        String playerName = clickedCell.getText();
-
-                        if (!isMovingPlayer) {
-                            if(isPlayer(playerName)) {
-                                isMovingPlayer = true;
-                                lastSelectedCell = clickedCell;
-                                movingPlayerName = playerName;
-
-                                lastSelectedCellRow = finalRow;
-                                lastSelectedCellCol = finalCol;
-                            }
-                        } else {
-                            clickedCell.setText(movingPlayerName);
-                            clickedCell.setBackground(lastSelectedCell.getBackground());
-
-                            botButton = clickedCell;
-
-                            if(Objects.equals(movingPlayerName, bot.getPlayerName())){
-                                currCol = finalCol;
-                                currRow = finalRow;
-                                int[] newPosition = {finalRow, finalCol};
-                                bot.setBoardPosition(newPosition);
-                            }
-
-                            lastSelectedCell.setText(gameBoard.getTileName(lastSelectedCellRow, lastSelectedCellCol));
-                            lastSelectedCell.setBackground(origionalColor[lastSelectedCellRow][lastSelectedCellCol]);
-
-                            isMovingPlayer = false;
-                            lastSelectedCell = null;
-                            movingPlayerName = null;
-                        }
-                    }
-                });
-
-                label.setHorizontalAlignment(SwingConstants.CENTER);
-                label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-                label.setPreferredSize(new Dimension(cellWidth, cellHeight));
-                label.setOpaque(true);
-
-                switch(labelText){
-                    case "Empty":
-                        label.setBackground(Color.DARK_GRAY);
-                        break;
-                    case "Clue":
-                        label.setBackground(Color.RED);
-                        break;
-                    case "Pool":
-                        label.setBackground(Color.CYAN);
-                        break;
-                    case "Spa":
-                        label.setBackground(Color.ORANGE);
-                        break;
-                    case "Living Room":
-                        label.setBackground(Color.YELLOW);
-                        break;
-                    case "Observatory":
-                        label.setBackground(new Color(128, 0, 128));
-                        break;
-                    case "Hall":
-                        label.setBackground(new Color(255, 105, 180));
-                        break;
-                    case "Patio":
-                        label.setBackground(new Color(192, 192, 192));
-                        break;
-                    case "Dining Room":
-                        label.setBackground(new Color(0, 0, 255));
-                        break;
-                    case "Kitchen":
-                        label.setBackground(new Color(128, 128, 0));
-                        break;
-                    case "Guest House":
-                        label.setBackground(new Color(255, 215, 0));
-                        break;
-                    case "Theater":
-                        label.setBackground(new Color(0, 255, 255));
-                        break;
-                    case "Mustard":
-                        label.setBackground(new Color(222, 222, 11));
-                        break;
-                    case "Scarlet":
-                        label.setBackground(new Color(220, 20, 60));
-                        break;
-                    case "White":
-                        label.setBackground(Color.WHITE);
-                        break;
-                    case "Green":
-                        label.setBackground(Color.GREEN);
-                        break;
-                    case "Peacock":
-                        label.setBackground(new Color(50, 100, 160));
-                        break;
-                    case "Plum":
-                        label.setBackground(new Color(100, 50, 180));
-                        break;
-                    default:
-                        if (labelText.contains("Door")) {
-                            label.setBackground(new Color(139, 69, 19)); // Brown color
-                        } else {
-                            label.setBackground(Color.WHITE); // Default color
-                        }
-                        break;
-                }
-
-                if(labelText.equals(bot.getPlayerName())){
-                    currRow = finalRow;
-                    currCol = finalCol;
-                    botButton = label;
-                }
-
-                origionalColor[i][j] = label.getBackground();
-
-                panel.add(label);
-            }
-        }
-
-        panel.setBounds(250, 10, 1200, 800);
-        panel.setFocusable(true);
+        elementBuilder.addBackground(background, frame);
+        elementBuilder.buildBoard(gameBoard, isMovingPlayer, gameLogic, lastSelectedCell, bot, origionalColor, panel);
 
         cardList.setEditable(false);
         cardList.setFocusable(false);
@@ -252,7 +131,6 @@ public class DisplayWindowPage {
         playTurnButton.setOpaque(true);
         playTurnButton.setBackground(Color.GREEN);
         playTurnButton.setBounds(1470, 60, 200, 100);
-
         playTurnButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -262,44 +140,13 @@ public class DisplayWindowPage {
                 guessFrame.setVisible(true);
 
                 // CALL function to move here (use currRow and currCol as inputs and update them on output)
-                Random random = new Random();
+                int[] moveResults = gameLogic.MoveLogic(gameBoard, currRow, currCol, origionalColor, bot, panel);
 
-                int roll1 = random.nextInt(6) + 1;
-                int roll2 = random.nextInt(6) + 1;
-                int totalRoll = roll1 + roll2;
-
-                JButton oldButton = botButton;
-                if(oldButton != null) {
-                    oldButton.setText(gameBoard.getTileName(currRow, currCol));
-                    oldButton.setBackground(origionalColor[currRow][currCol]);
-                }
-
-                int oldCurrRow = currRow;
-                int oldCurrCol = currCol;
-
-                System.out.print("Moving from " + currRow + ", " + currCol + " to ");
-
-                // CALL function to get the best target door
-                ArrayList<Card> roomCandidates = bot.getTargetRooms();
-                int[] closestDoor = findClosestDoor(roomCandidates);
-
-                bot.setMovementTarget(closestDoor[0], closestDoor[1]);
-                bot.executeOptimalMovements(totalRoll);
-
-                int[] newPos = bot.getBoardPosition();
-
-                currRow = newPos[0];
-                currCol = newPos[1];
-
-                Component[] components = panel.getComponents();
-                JButton desiredButton = (JButton) components[currRow * 24 + currCol];
-
-                desiredButton.setText(bot.getPlayerName());
-                desiredButton.setBackground(new Color(222, 222, 11));
-
-                botButton = desiredButton;
-
-                System.out.println(currRow + ", " + currCol);
+                int totalRoll = moveResults[0];
+                int oldCurrRow = moveResults[1];
+                int oldCurrCol = moveResults[2];
+                currRow = moveResults[3];
+                currCol = moveResults[4];
 
                 String guessLabelText = ("<html><style>h1{text-align:center;}</style><div text-align:center;><h1><u><b>Guess Made:</b></u></h1><br>");
                 JLabel guessLabel = new JLabel();
@@ -332,7 +179,7 @@ public class DisplayWindowPage {
                 String roomName = null;
                 Card roomCard = null;
                 String tileName = gameBoard.getTileName(row, col);
-                if(isRoomDoor(tileName)) {
+                if(gameLogic.isRoomDoor(tileName)) {
                     roomName = gameBoard.getTileName(row, col).replaceAll(" Door", "");
                     for(Card card : allCards){
                         if (Objects.equals(card.getCardName(), roomName)){
@@ -374,7 +221,7 @@ public class DisplayWindowPage {
                 cardShownLabel.setBounds(50, 200, 200, 30);
 
                 String[] noCardShown = {"No Card Shown"};
-                String[] allCardsList = concatenateArrays(suspects, weapons, rooms, noCardShown);
+                String[] allCardsList = gameLogic.concatenateArrays(suspects, weapons, rooms, noCardShown);
                 JComboBox cardShown = new JComboBox(allCardsList);
                 cardShown.setBounds(50, 225, 200, 25);
                 cardShown.setFocusable(true);
@@ -391,7 +238,7 @@ public class DisplayWindowPage {
                 closeButton.setBounds(200, 260, 200, 100);
                 closeButton.setOpaque(true);
 
-                boolean isInRoom = isRoomDoor(tileName);
+                boolean isInRoom = gameLogic.isRoomDoor(tileName);
 
                 if(!isInRoom){
                     playerShowedLabel.setVisible(false);
@@ -428,7 +275,7 @@ public class DisplayWindowPage {
                             assert playerShowing != null;
                             bot.getShownCard(seenCard, playerShowing);
 
-                            eliminateCards(bot);
+                            eliminateCardVisual(bot);
                             cardList.updateUI();
                         }
                     }
@@ -493,7 +340,6 @@ public class DisplayWindowPage {
 
         logGuessButton.setOpaque(true);
         logGuessButton.setBounds(1470, 670, 200, 100);
-
         logGuessButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -526,16 +372,7 @@ public class DisplayWindowPage {
                 assert whoShowedCard != null;
                 bot.watchCardReveal(whoGuessedCard, whoShowedCard, roomCard, weaponsCard, suspectCard);
 
-                eliminateCards(bot);
-            }
-        });
-
-        background.setOpaque(true);
-
-        frame.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                background.setBounds(0, -1000, frame.getWidth(), frame.getHeight() + 2000);
+                eliminateCardVisual(bot);
             }
         });
 
@@ -562,50 +399,17 @@ public class DisplayWindowPage {
         frame.setVisible(true);
     }
 
-    private boolean isPlayer(String playerName) {
-        return(Objects.equals(playerName, "Mustard") || Objects.equals(playerName, "Scarlet") || Objects.equals(playerName, "White") || Objects.equals(playerName, "Green") || Objects.equals(playerName, "Peacock") || Objects.equals(playerName, "Plum"));
-    }
-
-    private boolean isRoomDoor(String roomName) {
-        return(Objects.equals(roomName, "Spa Door") || Objects.equals(roomName, "Theater Door") || Objects.equals(roomName, "Living Room Door") || Objects.equals(roomName, "Observatory Door") || Objects.equals(roomName, "Patio Door") || Objects.equals(roomName, "Pool Door") || Objects.equals(roomName, "Hall Door") || Objects.equals(roomName, "Kitchen Door") || Objects.equals(roomName, "Dining Room Door") || Objects.equals(roomName, "Guest House Door"));
-    }
-
     public void addCardToHand(String newCard){
         cardsInHand.setText(cardsInHandString + newCard + "<br>");
         cardsInHandString = cardsInHandString + newCard + "<br>";
-        eliminateCards(bot);
-    }
-
-    protected static ImageIcon createImageIcon(String path, String description) {
-        URL imgURL = DisplayWindowPage.class.getResource(path);
-        if (imgURL != null) {
-            return new ImageIcon(new ImageIcon(imgURL, description).getImage().getScaledInstance(1750, 1100,  Image.SCALE_SMOOTH));
-        } else {
-            System.err.println("Couldn't find file: " + path);
-            return null;
-        }
-    }
-
-    public static String[] concatenateArrays(String[]... arrays) {
-        int totalLength = 0;
-        for (String[] array : arrays) {
-            totalLength += array.length;
-        }
-
-        String[] result = new String[totalLength];
-        int currentIndex = 0;
-        for (String[] array : arrays) {
-            System.arraycopy(array, 0, result, currentIndex, array.length);
-            currentIndex += array.length;
-        }
-        return result;
+        eliminateCardVisual(bot);
     }
 
     static ArrayList<Card> alreadyEliminated = new ArrayList<>();
-    public static void eliminateCards(Bot bot){
+    public static void eliminateCardVisual(Bot bot) {
         ArrayList<Card> cardsKnown = bot.getCardsDeducedNotSolution();
-        for(Card currCard : cardsKnown) {
-            if(!(alreadyEliminated.contains(currCard))) {
+        for (Card currCard : cardsKnown) {
+            if (!(alreadyEliminated.contains(currCard))) {
                 String cardName = currCard.getCardName();
                 alreadyEliminated.add(currCard);
 
@@ -623,24 +427,5 @@ public class DisplayWindowPage {
                 cardList.setText(cardListText);
             }
         }
-    }
-
-    public int[] findClosestDoor(ArrayList<Card> rooms){
-        int[] closestDoor = null;
-        int closestDistance = Integer.MAX_VALUE;
-        for(Card room : rooms) {
-            for (int i = 0; i < 29; i++) {
-                for (int j = 0; j < 24; j++) {
-                    if (Objects.equals(gameBoard.getTileName(i, j), (room.getCardName() + " Door"))){
-                        int distance = Math.abs(currCol - j) + Math.abs(currRow - i);
-                        if(distance < closestDistance){
-                            closestDoor = new int[]{i, j};
-                            closestDistance = distance;
-                        }
-                    }
-                }
-            }
-        }
-        return closestDoor;
     }
 }
